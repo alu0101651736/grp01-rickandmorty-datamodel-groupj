@@ -17,4 +17,17 @@ describe("Tests constructor de clase Dimension", () => {
   test("se crea una dimension", () => {
     expect(dimension instanceof Dimension).toBe(true);
   });
+
+  test("error de id vacio", () => {
+    expect(
+      () =>
+        new Dimension({
+          id: "",
+          nombre: "C-137",
+          descripcion: "Original",
+          estadoDim: "activa",
+          nivelTec: 7,
+        }),
+    ).toThrow("La ID no puede ser vacia");
+  });
 });
