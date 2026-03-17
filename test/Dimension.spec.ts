@@ -30,4 +30,17 @@ describe("Tests constructor de clase Dimension", () => {
         }),
     ).toThrow("La ID no puede ser vacia");
   });
+
+  test("error de nombre vacio", () => {
+    expect(
+      () =>
+        new Dimension({
+          id: "D1",
+          nombre: "",
+          descripcion: "Original",
+          estadoDim: "activa",
+          nivelTec: 7,
+        }),
+    ).toThrow("El nombre no puede ser vacio");
+  });
 });
