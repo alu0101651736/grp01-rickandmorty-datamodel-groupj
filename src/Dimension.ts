@@ -23,14 +23,11 @@ export class Dimension implements IDimension {
     if (!nombre || nombre.trim().length === 0) {
       throw new Error(`El nombre no puede ser vacio`);
     }
+      if (!descripcion || descripcion.trim().length === 0) {
+      throw new Error(`La descripcion no puede estar vacia`);
+    }  
     if (nivelTec < 1 || 10 < nivelTec) {
       throw new Error(`Indice fuera de rango`);
     }
-
-    this.id = id;
-    this.nombre = nombre;
-    this.descripcion = descripcion;
-    this.estadoDim = estadoDim;
-    this.nivelTec = nivelTec;
   }
 }
