@@ -24,6 +24,12 @@ describe("Tests constructor de clase Dimension", () => {
     );
   });
 
+  test("error de descripcion vacia", () => {
+    expect(() => new Dimension("D1", "C-137", "activa", "", 7)).toThrow(
+      "La descripcion no puede estar vacia",
+    );
+  });
+
   test("error de rango (negativo)", () => {
     expect(
       () => new Dimension("D1", "C-137", "activa", "Original", -1),
