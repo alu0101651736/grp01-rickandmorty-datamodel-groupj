@@ -1,12 +1,14 @@
 /** Valores posibles para el estado de la dimension */
 export type estadosDimension = "activa" | "destruida" | "en cuarentena";
 /** Tipos de especies */
-export type tiposEspecie = "humanoide" | "amorfo" | "robótico" | "parásito" | "hivemind";
+export type tiposEspecie = "humanoide" | "amorfo" | "robótico" | "parásito" | "hivemind" | "robotico" | "parasito";
 /** Tipos de inventos */
-export type tiposInvento = "Arma" | "Dispositivo de viaje" | "Biotecnología" | "Objeto cotidiano absurdo";
+export type tiposInvento = "Arma" | "Dispositivo de viaje" | "Biotecnología" | "Objeto cotidiano absurdo" | "Biotecnologia";
 /** Valores posibles para el estado de un personaje */
 export type estadosPersonaje = "vivo" | "muerto" | "desconocido" | "robot sustituto" | "clon";
 /** Valores posibles para la afiliación de un personaje */
-export type tipoAfiliacion = "Federación Galáctica" | "Consejo de Ricks" | "Familia Smith" | "Independiente";
+export type tipoAfiliacion = "Federación Galáctica" | "Consejo de Ricks" | "Familia Smith" | "Independiente" | 
+                             "Federacion Galactica";
 /** Valores posibles para el tipo de localizacion */
-export type tipoLocalizacion = "Planeta" | "Estación espacial" | "Dimensión de bolsillo" | "Simulación virtual";
+export type tipoLocalizacion = "Planeta" | "Estación espacial" | "Dimensión de bolsillo" | "Simulación virtual" | 
+                               "Dimension de bolsillo" | "Simulacion virtual" | "Estación espacial" ;
