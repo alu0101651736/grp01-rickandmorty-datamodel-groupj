@@ -1,6 +1,14 @@
 import { IDimension } from "./interfaces";
 import { estadosDimension } from "./types";
 
+/**
+ * Clase que representa una dimension en el sistema, implementa la interfaz IDimension.
+ * @param id - Identificador único de la dimension
+ * @param nombre - Nombre de la dimension
+ * @param estadoDim - Estado actual de la dimension
+ * @param nivelTec - Nivel tecnologico de la dimension, debe estar entre 1 y 10
+ * @param descripcion - Descripción adicional de la dimension
+ */
 export class Dimension implements IDimension {
   constructor(
     public readonly id: string,
