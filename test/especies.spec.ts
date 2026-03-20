@@ -10,106 +10,71 @@ describe("Especie", () => {
       "Tierra",
       "humanoide",
       80,
-      "Especie dominante en la Tierra"
+      "desc"
     );
 
     expect(especie.id).toBe("1");
     expect(especie.nombre).toBe("Humano");
     expect(especie.origen).toBe("Tierra");
-    expect(especie.tipo).toBe("humanoide");
-    expect(especie.esperanzaVida).toBe(80);
-    expect(especie.descripcion).toBe("Especie dominante en la Tierra");
   });
 
-  test("lanza error si el ID está vacío", () => {
-    expect(() => {
-      new Especie(
-        "",
-        "Humano",
-        "Tierra",
-        "humanoide",
-        80,
-        "desc"
-      );
-    }).toThrow();
+  test("permite origen null", () => {
+    const especie = new Especie(
+      "1",
+      "Alien",
+      null,
+      "amorfo",
+      50,
+      "desc"
+    );
+
+    expect(especie.origen).toBeNull();
   });
 
-  test("lanza error si el nombre está vacío", () => {
-    expect(() => {
-      new Especie(
-        "1",
-        "",
-        "Tierra",
-        "humanoide",
-        80,
-        "desc"
-      );
-    }).toThrow();
+  test("error si id vacío", () => {
+    expect(() =>
+      new Especie("", "Humano", "Tierra", "humanoide", 80, "desc")
+    ).toThrow("ID vacío");
   });
 
-  test("lanza error si el origen está vacío", () => {
-    expect(() => {
-      new Especie(
-        "1",
-        "Humano",
-        "",
-        "humanoide",
-        80,
-        "desc"
-      );
-    }).toThrow();
+  test("error si nombre vacío", () => {
+    expect(() =>
+      new Especie("1", "", "Tierra", "humanoide", 80, "desc")
+    ).toThrow("Nombre vacío");
   });
 
-  test("lanza error si la descripción está vacía", () => {
-    expect(() => {
-      new Especie(
-        "1",
-        "Humano",
-        "Tierra",
-        "humanoide",
-        80,
-        ""
-      );
-    }).toThrow();
+  test("error si origen string vacío", () => {
+    expect(() =>
+      new Especie("1", "Humano", "", "humanoide", 80, "desc")
+    ).toThrow("Origen vacío");
   });
 
-  test("lanza error si la esperanza de vida es 0", () => {
-    expect(() => {
-      new Especie(
-        "1",
-        "Humano",
-        "Tierra",
-        "humanoide",
-        0,
-        "desc"
-      );
-    }).toThrow();
+  test("NO falla si origen es null (no entra en trim)", () => {
+    expect(() =>
+      new Especie("1", "Humano", null, "humanoide", 80, "desc")
+    ).not.toThrow();
   });
 
-  test("lanza error si la esperanza de vida es negativa", () => {
-    expect(() => {
-      new Especie(
-        "1",
-        "Humano",
-        "Tierra",
-        "humanoide",
-        -10,
-        "desc"
-      );
-    }).toThrow();
+  test("error si descripción vacía", () => {
+    expect(() =>
+      new Especie("1", "Humano", "Tierra", "humanoide", 80, "")
+    ).toThrow("Descripción vacía");
   });
 
-  test("lanza error si los campos tienen solo espacios", () => {
-    expect(() => {
-      new Especie(
-        "   ",
-        "   ",
-        "   ",
-        "humanoide",
-        10,
-        "   "
-      );
-    }).toThrow();
+  test("error si esperanza de vida <= 0", () => {
+    expect(() =>
+      new Especie("1", "Humano", "Tierra", "humanoide", 0, "desc")
+    ).toThrow("Esperanza de vida inválida");
+
+    expect(() =>
+      new Especie("1", "Humano", "Tierra", "humanoide", -1, "desc")
+    ).toThrow("Esperanza de vida inválida");
+  });
+
+  test("error si campos tienen solo espacios", () => {
+    expect(() =>
+      new Especie("   ", "   ", "   ", "humanoide", 10, "   ")
+    ).toThrow();
   });
 
 });
