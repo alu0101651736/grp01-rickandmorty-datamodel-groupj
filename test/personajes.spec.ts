@@ -160,4 +160,34 @@ describe("Personaje", () => {
     }).toThrow();
   });
 
+  test("especie null", () => {
+    const personaje = new Personaje(
+      "1",
+      "Rick",
+      null,
+      "dim",
+      "vivo",
+      "Independiente",
+      5,
+      "desc"
+    );
+
+    expect(personaje.especie).toBeNull();
+  });
+
+  test("dimension null", () => {
+    const personaje = new Personaje(
+      "1",
+      "Rick",
+      "esp",
+      null,
+      "vivo",
+      "Independiente",
+      5,
+      "desc"
+    );
+
+    expect(personaje.dimension).toBeNull();
+  });
+
 });
