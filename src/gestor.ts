@@ -218,6 +218,63 @@ export class GestorMultiversal {
     })
   }
 
+  // Actualizar especie
+  updateEspecie(id: string, cambios: { nombre?: string; origen?: string | null; tipo?: tiposEspecie; esperanzaVida?: number; descripcion?: string }): void {
+    const especie = this.especies.find(e => e.id === id);
+    if (!especie) throw new Error("La especie no existe");
+
+    // Validar nombre
+    if (cambios.nombre !== undefined) {
+      if (cambios.nombre.trim() === "") {
+        throw new Error("El nombre no puede estar vacío");
+      }
+    }
+
+    // Validar origen
+    if (cambios.origen !== undefined) {
+      if (cambios.origen === null) {
+        throw new Error("La especie debe tener un origen");
+      }
+      const dimension = this.dimensiones.find(d => d.id === cambios.origen);
+      const localizacion = this.localizaciones.find(l => l.id === cambios.origen);
+      if (!dimension && !localizacion) throw new Error("Origen de la especie desconocido");
+    }
+
+    // Validar esperanza de vida
+    if (cambios.esperanzaVida !== undefined) {
+      if (cambios.esperanzaVida <= 0) {
+        throw new Error("Esperanza de vida inválida");
+      }
+    }
+
+    // Validar descripción
+    if (cambios.descripcion !== undefined) {
+      if (cambios.descripcion.trim() === "") {
+        throw new Error("La descripción no puede estar vacía");
+      }
+    }
+
+    // Comprobar si el cambio de nombre, tipo u origen generaría una especie duplicada
+    const nombreAComprobar = cambios.nombre !== undefined ? cambios.nombre : especie.nombre;
+    const tipoAComprobar = cambios.tipo !== undefined ? cambios.tipo : especie.tipo;
+    const origenAComprobar = cambios.origen !== undefined ? cambios.origen : especie.origen;
+
+    const duplicado = this.especies.some(e =>
+      e.id !== id &&
+      this.normalize(e.nombre) === this.normalize(nombreAComprobar) &&
+      e.tipo === tipoAComprobar &&
+      e.origen === origenAComprobar
+    );
+    if (duplicado) throw new Error("Especie duplicada");
+
+    // Si no se ha lanzado ningún error, se aplican los cambios
+    if (cambios.nombre !== undefined) especie.nombre = cambios.nombre;
+    if (cambios.origen !== undefined) especie.origen = cambios.origen;
+    if (cambios.tipo !== undefined) especie.tipo = cambios.tipo;
+    if (cambios.esperanzaVida !== undefined) especie.esperanzaVida = cambios.esperanzaVida;
+    if (cambios.descripcion !== undefined) especie.descripcion = cambios.descripcion;
+  }
+
   // métodos para localizaciones
 
   lengthLocalizaciones(): number {
