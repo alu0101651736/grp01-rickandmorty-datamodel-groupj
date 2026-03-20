@@ -129,6 +129,29 @@ describe("GestorMultiversal - Dimensiones", () => {
     expect(() => gestor.updateDimension("C-1", { nombre: "Dimension 1" })).not.toThrow();
   });
 
+  test("updateDimension no aplica cambios si falla validación", () => {
+    const d = new Dimension("C-1", "Dimension 1", "activa", 5, "descripcion original");
+    gestor.addDimension(d);
+
+    // Intentar cambiar nombre y descripción, pero descripción es vacía
+    expect(() => gestor.updateDimension("C-1", { nombre: "Nuevo Nombre", descripcion: "   " })).toThrow();
+
+    // Verificar que AMBOS cambios fueron rechazados
+    expect(d.nombre).toBe("Dimension 1");
+    expect(d.descripcion).toBe("descripcion original");
+  });
+
+  test("updateDimension aplica todos los cambios si validación pasa", () => {
+    const d = new Dimension("C-1", "Dimension 1", "activa", 5, "descripcion original");
+    gestor.addDimension(d);
+
+    gestor.updateDimension("C-1", { nombre: "Nuevo Nombre", descripcion: "Nueva descripcion", nivelTec: 8 });
+
+    expect(d.nombre).toBe("Nuevo Nombre");
+    expect(d.descripcion).toBe("Nueva descripcion");
+    expect(d.nivelTec).toBe(8);
+  });
+
 });
 
 describe("GestorMultiversal - Especies", () => {

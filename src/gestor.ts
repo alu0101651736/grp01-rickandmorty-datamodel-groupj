@@ -47,38 +47,48 @@ export class GestorMultiversal {
     });
   }
 
+  // Actualizar dimensión
   updateDimension(id: string, cambios: { nombre?: string; estadoDim?: estadosDimension; nivelTec?: number; descripcion?: string }): void {
     const dimension = this.dimensiones.find(d => d.id === id);
     if (!dimension) throw new Error("La dimensión no existe");
-    // Actualizar el nombre
+
+    let cambio_nombre = false, cambio_desc = false, cambio_nivel = false, cambio_estado = false;
+
+    // Comprobación del nombre
     if (cambios.nombre !== undefined) {
       if (cambios.nombre.trim() === "") {
         throw new Error("El nombre no puede estar vacío");
       } else if(this.dimensiones.some(d => this.normalize(d.nombre) === this.normalize(cambios.nombre) && d.id !== id)) {
         throw new Error("El nombre de la dimensión ya existe");
       }
-      dimension.nombre = cambios.nombre;
+      cambio_nombre = true;
     }
-    // Actualizar el estado
+    // Comprobación del estado
     if (cambios.estadoDim !== undefined) {
-      dimension.estadoDim = cambios.estadoDim;
+      cambio_estado = true;
     }
-    // Actualizar el nivel tecnológico
+    // Comprobación del nivel tecnológico
     if (cambios.nivelTec !== undefined) {
       if (cambios.nivelTec < 1 || cambios.nivelTec > 10) {
         throw new Error("El nivel tecnológico debe estar entre 1 y 10");
       }
-      dimension.nivelTec = cambios.nivelTec;
+      cambio_nivel = true;
     }
-    // Actualizar la descripción
+    // Comprobación de la descripción
     if (cambios.descripcion !== undefined) {
       if (cambios.descripcion.trim() === "") {
         throw new Error("La descripción no puede estar vacía");
       }
-      dimension.descripcion = cambios.descripcion;
+      cambio_desc = true;
     }
-  }
 
+    // Aplicar cambios
+    if (cambio_nombre) dimension.nombre = cambios.nombre;
+    if (cambio_estado) dimension.estadoDim = cambios.estadoDim;
+    if (cambio_nivel) dimension.nivelTec = cambios.nivelTec;
+    if (cambio_desc) dimension.descripcion = cambios.descripcion;
+
+  }
 
   // métodos para personajes
 
@@ -115,6 +125,7 @@ export class GestorMultiversal {
       if (i.inventor === id) i.inventor = null;
     })
   }
+
 
   // métodos para especies
 
