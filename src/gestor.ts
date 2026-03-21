@@ -1,27 +1,47 @@
-import { RepositorioDimensiones } from "./RepositorioDimensiones";
-import { RepositorioEspecies } from "./RepositorioEspecies";
-import { RepositorioPersonajes } from "./RepositorioPersonajes";
-import { RepositorioLocalizaciones } from "./RepositorioLocalizaciones";
-import { RepositorioInventos } from "./RepositorioInventos";
-import { Dimension } from "./Dimension";
-import { Especie } from "./especies";
-import { Personaje } from "./personajes";
-import { Localizacion } from "./localizaciones";
-import { Invento } from "./inventos";
-import { estadosDimension } from "./types";
-import { estadosPersonaje } from "./types";
-import { tipoAfiliacion } from "./types";
-import { tiposEspecie } from "./types";
-import { tipoLocalizacion } from "./types";
-import { tiposInvento } from "./types";
+import { RepositorioDimensiones } from "./RepositorioDimensiones.js";
+import { RepositorioEspecies } from "./RepositorioEspecies.js";
+import { RepositorioPersonajes } from "./RepositorioPersonajes.js";
+import { RepositorioLocalizaciones } from "./RepositorioLocalizaciones.js";
+import { RepositorioInventos } from "./RepositorioInventos.js";
+import { Dimension } from "./Dimension.js";
+import { Especie } from "./especies.js";
+import { Personaje } from "./personajes.js";
+import { Localizacion } from "./localizaciones.js";
+import { Invento } from "./inventos.js";
+import { estadosDimension } from "./types.js";
+import { estadosPersonaje } from "./types.js";
+import { tipoAfiliacion } from "./types.js";
+import { tiposEspecie } from "./types.js";
+import { tipoLocalizacion } from "./types.js";
+import { tiposInvento } from "./types.js";
+import { Low } from "lowdb";
+import { Data } from "./Database/db.js";
 
+/**
+ * clase que contiene las funciones para registrar y filtrar personajes en la base de datos
+ * @param _db - la base de datos
+ * @param dimensionesRepo - referencia al repositorio de dimensiones
+ * @param personajesRepo - referencia al repositorio de personajes
+ * @param especiesRepo - referencia al repositorio de especies
+ * @param localizacionesRepo - referencia al repositorio de localizaciones
+ * @param inventosRepo - referencia al repositorio de inventos
+ */
 export class GestorMultiversal {
-  private dimensionesRepo = new RepositorioDimensiones(this.normalize);
-  private personajesRepo = new RepositorioPersonajes(this.normalize);
-  private especiesRepo = new RepositorioEspecies(this.normalize);
-  private localizacionesRepo = new RepositorioLocalizaciones(this.normalize);
-  private inventosRepo = new RepositorioInventos(this.normalize);
+  private _db: Low<Data>;
+  public dimensionesRepo: RepositorioDimensiones;
+  public personajesRepo: RepositorioPersonajes;
+  public especiesRepo: RepositorioEspecies;
+  public localizacionesRepo: RepositorioLocalizaciones;
+  public inventosRepo: RepositorioInventos;
 
+  constructor(database: Low<Data>) {
+    this._db = database;
+    this.dimensionesRepo = new RepositorioDimensiones(this._db);
+    this.personajesRepo = new RepositorioPersonajes(this._db);
+    this.especiesRepo = new RepositorioEspecies(this._db);
+    this.localizacionesRepo = new RepositorioLocalizaciones(this._db);
+    this.inventosRepo = new RepositorioInventos(this._db);
+  }
   //métodos de inserción
 
   addDimension(dimension: Dimension): void {
@@ -75,7 +95,7 @@ export class GestorMultiversal {
     this.dimensionesRepo.remove(id);
 
     const aux = this.localizacionesRepo.filterByDimension(id);
-    aux.forEach((objeto) => {this.removeLocalizacion(objeto.id)});
+    aux.then(a => a.forEach((objeto) => {this.removeLocalizacion(objeto.id)}));
 
     this.personajesRepo.setNullDimension(id);
     this.especiesRepo.setNullOrigen(id);
@@ -153,55 +173,67 @@ export class GestorMultiversal {
 
   // ---------------- PERSONAJES ----------------
 
-  filterPersonajesByNombre(nombre: string): Personaje[] {
+  async filterPersonajesByNombre(nombre: string): Promise<Personaje[]> {
+    await this._db.read();
     return this.personajesRepo.filterByNombre(nombre);
   }
 
-  filterPersonajesByEspecie(especie: string): Personaje[] {
+  async filterPersonajesByEspecie(especie: string): Promise<Personaje[]> {
+    await this._db.read();
     return this.personajesRepo.filterByEspecie(especie);
   }
 
-  filterPersonajesByAfiliacion(afiliacion: tipoAfiliacion): Personaje[] {
+  async filterPersonajesByAfiliacion(afiliacion: tipoAfiliacion): Promise<Personaje[]> {
+    await this._db.read();
     return this.personajesRepo.filterByAfiliacion(afiliacion);
   }
 
-  filterPersonajesByEstado(estado: estadosPersonaje): Personaje[] {
+  async filterPersonajesByEstado(estado: estadosPersonaje): Promise<Personaje[]> {
+    await this._db.read();
     return this.personajesRepo.filterByEstado(estado);
   }
 
-  filterPersonajesByDimension(dimension: string): Personaje[] {
+  async filterPersonajesByDimension(dimension: string): Promise<Personaje[]> {
+    await this._db.read();
     return this.personajesRepo.filterByDimension(dimension);
   }
 
   // ---------------- LOCALIZACIONES ----------------
 
-  filterLocalizacionesByNombre(nombre: string): Localizacion[] {
+  async filterLocalizacionesByNombre(nombre: string): Promise<Localizacion[]> {
+    await this._db.read();
     return this.localizacionesRepo.filterByNombre(nombre);
   }
 
-  filterLocalizacionesByTipo(tipo: tipoLocalizacion): Localizacion[] {
+  async filterLocalizacionesByTipo(tipo: tipoLocalizacion): Promise<Localizacion[]> {
+    await this._db.read();
     return this.localizacionesRepo.filterByTipo(tipo);
   }
 
-  filterLocalizacionesByDimension(id: string): Localizacion[] {
+  async filterLocalizacionesByDimension(id: string): Promise<Localizacion[]> {
+    await this._db.read();
     return this.localizacionesRepo.filterByDimension(id);
   }
 
   // ---------------- INVENTOS ----------------
 
-  filterInventosByNombre(nombre: string): Invento[] {
+  async filterInventosByNombre(nombre: string): Promise<Invento[]> {
+    await this._db.read();
     return this.inventosRepo.filterByNombre(nombre);
   }
 
-  filterInventosByTipo(tipo: tiposInvento): Invento[] {
+  async filterInventosByTipo(tipo: tiposInvento): Promise<Invento[]> {
+    await this._db.read();
     return this.inventosRepo.filterByTipo(tipo);
   }
 
-  filterInventosByInventor(inventor: string): Invento[] {
+  async filterInventosByInventor(inventor: string): Promise<Invento[]> {
+    await this._db.read();
     return this.inventosRepo.filterByInventor(inventor);
   }
 
-  filterInventosByPeligrosidad(peligro: number): Invento[] {
+  async filterInventosByPeligrosidad(peligro: number): Promise<Invento[]> {
+    await this._db.read();
     return this.inventosRepo.filterByPeligrosidad(peligro);
   }
 
@@ -223,34 +255,33 @@ export class GestorMultiversal {
 
   //método para las variantes
 
-  getVariantesPersonaje(personaje: Personaje): Personaje[] {
-    return this.personajesRepo.getAll().filter(p =>
+  async getVariantesPersonaje(personaje: Personaje): Promise<Personaje[]> {
+    return this.personajesRepo.getAll().then(r => r.filter(p =>
       p.id !== personaje.id &&
       this.normalize(p.nombre) === this.normalize(personaje.nombre) &&
       p.dimension !== personaje.dimension
-    );
+    ) as Personaje[]);
   }
 
   //métodos de control del estado global del multiverso
 
-  getDimensionesDestruidas(): Dimension[] {
-    return this.dimensionesRepo.filterByEstado("destruida");
+  async getDimensionesDestruidas(): Promise<Dimension[]> {
+    return await this.dimensionesRepo.filterByEstado("destruida");
   }
 
-  getPersonajesDimDestruida(): Personaje[] {
-    const idsDestruidas = this.getDimensionesDestruidas().map(d => d.id);
-    return this.personajesRepo.getAll().filter(p =>
+  async getPersonajesDimDestruida(): Promise<Personaje[]> {
+    const dimension = await this.getDimensionesDestruidas();
+    const idsDestruidas = dimension.map(d => d.id);
+    return this.personajesRepo.getAll().then(r => r.filter(p =>
       p.dimension !== null && idsDestruidas.includes(p.dimension)
-    );
+    ));
   }
 
-  getPersonajesDimEliminada(): Personaje[] {
-    return this.personajesRepo.getNullDimension();
+  async getPersonajesDimEliminada(): Promise<Personaje[]> {
+    return await this.personajesRepo.getNullDimension();
   }
 
-  
-  //métodos auxiliares
-  private normalize(texto: string): string {
+  normalize(texto: string): string {
     return texto
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")

@@ -1,29 +1,50 @@
-import { RepositorioBase } from "./RepositorioBase";
-import { Dimension } from "./Dimension";
-import { IDuplicable } from "./interfaces";
-import { estadosDimension } from "./types";
+import { Dimension } from "./Dimension.js";
+import { IDuplicable, IRepositorio } from "./interfaces.js";
+import { estadosDimension } from "./types.js";
+import { Low } from "lowdb"
+import { Data } from "./Database/db.js";
+import { normalize } from "./auxFunc.js";
 
-export class RepositorioDimensiones extends RepositorioBase<Dimension> implements IDuplicable<Dimension>{
-
-  constructor(private normalize: (s: string) => string) {
-    super();
+/**
+ * clase que contiene las funciones para registrar y filtrar dimensiones en la base de datos
+ * @param _db - la base de datos
+ */
+export class RepositorioDimensiones implements IDuplicable<Dimension>, IRepositorio<Dimension> {
+  private _db: Low<Data>;
+  constructor(database: Low<Data>) {
+    this._db = database;
   }
 
-  override add(dimension: Dimension): void {
-    if (this.isDuplicate(dimension)) {
-      throw new Error("Dimensión duplicada");
+  async add(dimension: Dimension): Promise<void>{
+    await this._db.read();
+
+    if (this.isDuplicate(dimension).then()) {
+      //throw new Error("Dimensión duplicada");
     }
-    super.add(dimension);
+    this._db.data.dimension.push(dimension);
+    await this._db.write();
   }
 
-  update(id: string, cambios: { nombre?: string; estadoDim?: estadosDimension;
-                                nivelTec?: number; descripcion?: string;}): void {
-    const dimension = this.findById(id);
+  async remove(id: string): Promise<void> {
+    await this._db.read();
+    if (typeof this.findById(id) === "undefined") throw new Error("El elemento no existe");
+    this._db.data.dimension = this._db.data.dimension.filter(i => i.id !== id);
+    await this._db.write();
+  }
+
+  async findById(id: string): Promise<Dimension | undefined> {
+    await this._db.read();
+    return this._db.data.dimension.find(d => d.id === id);
+  }
+
+  async update(id: string, cambios: Partial<Dimension>): Promise<boolean> {
+    await this._db.read();
+    const dimension = this._db.data.dimension.find(d => d.id === id);
     if (!dimension) throw new Error("La dimensión no existe");
 
     if (cambios.nombre !== undefined) {
       if (cambios.nombre.trim() === "") throw new Error("El nombre no puede estar vacío");
-      else if (this.objetos.some(d => this.normalize(d.nombre) === this.normalize(cambios.nombre) && d.id !== id)) 
+      else if (this._db.data.dimension.some(d => normalize(d.nombre) === normalize(cambios.nombre) && d.id !== id)) 
         throw new Error("El nombre de la dimensión ya existe");
     }
 
@@ -43,14 +64,24 @@ export class RepositorioDimensiones extends RepositorioBase<Dimension> implement
     if (cambios.estadoDim !== undefined) dimension.estadoDim = cambios.estadoDim;
     if (cambios.nivelTec !== undefined) dimension.nivelTec = cambios.nivelTec;
     if (cambios.descripcion !== undefined) dimension.descripcion = cambios.descripcion;
+
+    await this._db.write();
+    return true;
   }
 
-  filterByEstado(estado: estadosDimension): Dimension[] {
-    return this.objetos.filter(d => d.estadoDim === estado);
+  async getAll(): Promise<Dimension[]> {
+    await this._db.read();
+    return this._db.data.dimension;
+  } 
+
+  async filterByEstado(estado: estadosDimension): Promise<Dimension[]> {
+    this._db.read();
+    return this._db.data.dimension.filter(d => d.estadoDim === estado);
   }
 
-  isDuplicate(other: Dimension): boolean { 
-    const duplicado = this.objetos.some(d => this.normalize(d.nombre) === this.normalize(other.nombre)); 
+  async isDuplicate(other: Dimension): Promise<boolean> { 
+    await this._db.write();
+    const duplicado = this._db.data.dimension.some(d => normalize(d.nombre) === normalize(other.nombre)); 
     if (duplicado) return true; 
     return false;
   }

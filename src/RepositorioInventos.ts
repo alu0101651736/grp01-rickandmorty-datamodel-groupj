@@ -1,25 +1,47 @@
-import { RepositorioBase } from "./RepositorioBase";
-import { IDuplicable } from "./interfaces";
-import { Invento } from "./inventos";
-import { tiposInvento } from "./types";
 
-export class RepositorioInventos extends RepositorioBase<Invento> implements IDuplicable<Invento> {
+import { IDuplicable } from "./interfaces.js";
+import { Invento } from "./inventos.js";
+import { tiposInvento } from "./types.js";
+import { Low } from "lowdb"
+import { Data, db } from "./Database/db.js";
+import { normalize } from "./auxFunc.js";
 
-  constructor(private normalize: (s: string) => string) {
-    super();
+/**
+ * clase que contiene las funciones para registrar y filtrar inventos en la base de datos
+ * @param _db - la base de datos
+ */
+export class RepositorioInventos implements IDuplicable<Invento> {
+  private _db: Low<Data>;
+  constructor(database: Low<Data>) {
+    this._db = database;
   }
 
-  override add(invento: Invento): void {
-    if (this.isDuplicate(invento)) {
-      throw new Error("Invento duplicado");
+  async add(invento: Invento): Promise<void>{
+      await this._db.read()
+  
+      if (this.isDuplicate(invento)) {
+        throw new Error("Dimensión duplicada");
+      }
+      this._db.data.invento.push(invento);
+      await this._db.write();
     }
-    super.add(invento);
-  }
+  
+    async remove(id: string): Promise<void> {
+      await this._db.read();
+      if (typeof this.findById(id) === "undefined") throw new Error("El elemento no existe");
+      this._db.data.invento = this._db.data.invento.filter(i => i.id !== id);
+      await this._db.write();
+    }
+  
+    async findById(id: string): Promise<Invento | undefined> {
+      await this._db.read();
+      return this._db.data.invento.find(i => i.id === id);
+    }
 
-  update(id: string, cambios: { nombre?: string; inventor?: string | null; tipo?: tiposInvento; 
-                                nivelPeligro?: number; descripcion?: string }): void {
-
-    const invento = this.findById(id);
+  async update(id: string, cambios: { nombre?: string; inventor?: string | null; tipo?: tiposInvento; 
+                                nivelPeligro?: number; descripcion?: string }): Promise<void> {
+    await this._db.read();
+    const invento = this._db.data.invento.find(i => i.id === id);
     if (!invento) throw new Error("El invento no existe");
     const copia = { ...invento };
 
@@ -41,9 +63,9 @@ export class RepositorioInventos extends RepositorioBase<Invento> implements IDu
     if (cambios.descripcion !== undefined) 
       if (cambios.descripcion.trim() === "") throw new Error("La descripción no puede estar vacía");
 
-    const duplicado = this.objetos.some(i =>
+    const duplicado = this._db.data.invento.some(i =>
       i.id !== id &&
-      this.normalize(i.nombre) === this.normalize(copia.nombre) &&
+      normalize(i.nombre) === normalize(copia.nombre) &&
       i.tipo === copia.tipo &&
       i.inventor === copia.inventor
     );
@@ -55,33 +77,47 @@ export class RepositorioInventos extends RepositorioBase<Invento> implements IDu
     if (cambios.tipo !== undefined) invento.tipo = cambios.tipo;
     if (cambios.nivelPeligro !== undefined) invento.nivelPeligro = cambios.nivelPeligro;
     if (cambios.descripcion !== undefined) invento.descripcion = cambios.descripcion;
+
+    await this._db.write();
   }
 
-  filterByNombre(nombre: string): Invento[] {
-    return this.objetos.filter(i => i.nombre === nombre);
+    async getAll(): Promise<Invento[]> {
+      await this._db.read();
+      return this._db.data.invento;
+    } 
+
+  async filterByNombre(nombre: string): Promise<Invento[]> {
+    this._db.read();
+    return this._db.data.invento.filter(i => i.nombre === nombre);
   } 
   
-  filterByTipo(tipo: tiposInvento): Invento[] {
-    return this.objetos.filter(i => i.tipo === tipo);
+  async filterByTipo(tipo: tiposInvento): Promise<Invento[]> {
+    this._db.read();
+    return this._db.data.invento.filter(i => i.tipo === tipo);
   }
 
-  filterByInventor(inventor: string): Invento[] {
-    return this.objetos.filter(i => i.inventor === inventor);
+  async filterByInventor(inventor: string): Promise<Invento[]> {
+    this._db.read();
+    return this._db.data.invento.filter(i => i.inventor === inventor);
   }
 
-  filterByPeligrosidad(peligro: number): Invento[] {
-    return this.objetos.filter(i => i.nivelPeligro === peligro);
+  async filterByPeligrosidad(peligro: number): Promise<Invento[]> {
+    this._db.read();
+    return this._db.data.invento.filter(i => i.nivelPeligro === peligro);
   }  
 
-  setNullInventor(id: string) {
-    this.objetos.forEach(i => {
+  async setNullInventor(id: string): Promise<void> {
+    this._db.read();
+    this._db.data.invento.forEach(i => {
       if (i.inventor === id) i.inventor = null;
     });
+    this._db.write();
   }
 
-  isDuplicate(other: Invento): boolean { 
-    return this.objetos.some(i => 
-      this.normalize(i.nombre) === this.normalize(other.nombre) &&
+  async isDuplicate(other: Invento): Promise<boolean> { 
+    this._db.read();
+    return this._db.data.invento.some(i => 
+      normalize(i.nombre) === normalize(other.nombre) &&
       i.tipo === other.tipo &&
       i.inventor === other.inventor
     );

@@ -1,26 +1,48 @@
-import { RepositorioBase } from "./RepositorioBase";
-import { IDuplicable } from "./interfaces";
-import { Personaje } from "./personajes";
-import { estadosPersonaje } from "./types";
-import { tipoAfiliacion } from "./types";
+import { IDuplicable } from "./interfaces.js";
+import { Personaje } from "./personajes.js";
+import { estadosPersonaje } from "./types.js";
+import { tipoAfiliacion } from "./types.js";
+import { Low } from "lowdb"
+import { Data } from "./Database/db.js";
+import { normalize } from "./auxFunc.js";
 
-export class RepositorioPersonajes extends RepositorioBase<Personaje> implements IDuplicable<Personaje> {
-
-  constructor(private normalize: (s: string) => string) {
-    super();
-  }
-
-  override add(personaje: Personaje): void {
-    if (this.isDuplicate(personaje)) {
-      throw new Error("Personaje duplicado");
+/**
+ * clase que contiene las funciones para registrar y filtrar personajes en la base de datos
+ * @param _db - la base de datos
+ */
+export class RepositorioPersonajes implements IDuplicable<Personaje> {
+  private _db: Low<Data>;
+    constructor(database: Low<Data>) {
+      this._db = database;
     }
-    super.add(personaje);
-  }
+  
+    async add(personaje: Personaje): Promise<void>{
+      await this._db.read()
+  
+      if (this.isDuplicate(personaje)) {
+        throw new Error("Dimensión duplicada");
+      }
+      this._db.data.personaje.push(personaje);
+      await this._db.write();
+    }
+  
+    async remove(id: string): Promise<void> {
+      await this._db.read();
+      if (typeof this.findById(id) === "undefined") throw new Error("El elemento no existe");
+      this._db.data.dimension = this._db.data.dimension.filter(i => i.id !== id);
+      await this._db.write();
+    }
+  
+    async findById(id: string): Promise<Personaje | undefined> {
+      await this._db.read();
+      return this._db.data.personaje.find(i => i.id === id);
+    }
 
-  update(id: string, cambios: { nombre?: string; especie?: string | null; dimension?: string | null;
+  async update(id: string, cambios: { nombre?: string; especie?: string | null; dimension?: string | null;
                                 estado?: estadosPersonaje; afiliacion?: tipoAfiliacion; 
-                                nivelInteligencia?: number; descripcion?: string }): void {
-    const personaje = this.findById(id);
+                                nivelInteligencia?: number; descripcion?: string }): Promise<void> {
+    this._db.read();                              
+    const personaje = this._db.data.personaje.find(p => p.id === id);
     if (!personaje) throw new Error("El personaje no existe");
     const copia = { ...personaje };
 
@@ -48,9 +70,9 @@ export class RepositorioPersonajes extends RepositorioBase<Personaje> implements
     if (cambios.descripcion !== undefined)
       if (cambios.descripcion.trim() === "") throw new Error("La descripción no puede estar vacía");
 
-    const duplicado = this.objetos.some(p => 
+    const duplicado = this._db.data.personaje.some(p => 
       p.id !== copia.id &&
-      this.normalize(p.nombre) === this.normalize(copia.nombre) &&
+      normalize(p.nombre) === normalize(copia.nombre) &&
       p.especie === copia.especie &&
       p.dimension === copia.dimension); 
 
@@ -65,45 +87,59 @@ export class RepositorioPersonajes extends RepositorioBase<Personaje> implements
     if (cambios.descripcion !== undefined) personaje.descripcion = cambios.descripcion;
   }
 
-  filterByNombre(nombre: string): Personaje[] {
-    return this.objetos.filter(p => p.nombre === nombre);
+  async getAll(): Promise<Personaje[]> {
+      await this._db.read();
+      return this._db.data.personaje;
+    } 
+
+  async filterByNombre(nombre: string): Promise<Personaje[]> {
+    this._db.read();
+    return this._db.data.personaje.filter(p => p.nombre === nombre);
   }
 
-  filterByEspecie(especie: string): Personaje[] {
-    return this.objetos.filter(p => p.especie === especie);
+  async filterByEspecie(especie: string): Promise<Personaje[]> {
+    this._db.read();
+    return this._db.data.personaje.filter(p => p.especie === especie);
   }
 
-  filterByAfiliacion(afiliacion: tipoAfiliacion): Personaje[] {
-    return this.objetos.filter(p => p.afiliacion === afiliacion);
+  async filterByAfiliacion(afiliacion: tipoAfiliacion): Promise<Personaje[]> {
+    this._db.read();
+    return this._db.data.personaje.filter(p => p.afiliacion === afiliacion);
   }
 
-  filterByEstado(estado: estadosPersonaje): Personaje[] {
-    return this.objetos.filter(p => p.estado === estado);
+  async filterByEstado(estado: estadosPersonaje): Promise<Personaje[]> {
+    this._db.read();
+    return this._db.data.personaje.filter(p => p.estado === estado);
   }
 
-  filterByDimension(dimension: string): Personaje[] {
-    return this.objetos.filter(p => p.dimension === dimension);
+  async filterByDimension(dimension: string): Promise<Personaje[]> {
+    this._db.read();
+    return this._db.data.personaje.filter(p => p.dimension === dimension);
   }
 
-  setNullDimension(id: string): void {
-    this.objetos.forEach(e => {
+  async setNullDimension(id: string): Promise<void> {
+    this._db.read();
+    this._db.data.personaje.forEach(e => {
       if (e.dimension === id) e.dimension = null;
     });
   }
 
-  setNullEspecie(id: string): void {
-    this.objetos.forEach(e => {
+  async setNullEspecie(id: string): Promise<void> {
+    this._db.read();
+    this._db.data.personaje.forEach(e => {
       if (e.especie === id) e.especie = null;
     });
   }
 
-  getNullDimension(): Personaje[] {
-    return this.objetos.filter(e => e.dimension === null);
+  async getNullDimension(): Promise<Personaje[]> {
+    this._db.read();
+    return this._db.data.personaje.filter(e => e.dimension === null);
   }
 
-  isDuplicate(other: Personaje): boolean { 
-    const duplicado = this.objetos.some(p => 
-      this.normalize(p.nombre) === this.normalize(other.nombre) &&
+  async isDuplicate(other: Personaje): Promise<boolean> {
+    this._db.read(); 
+    const duplicado = this._db.data.personaje.some(p => 
+      normalize(p.nombre) === normalize(other.nombre) &&
       p.especie === other.especie &&
       p.dimension === other.dimension); 
 

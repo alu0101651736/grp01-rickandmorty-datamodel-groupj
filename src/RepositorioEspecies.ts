@@ -1,24 +1,45 @@
-import { RepositorioBase } from "./RepositorioBase";
-import { IDuplicable } from "./interfaces";
-import { Especie } from "./especies";
-import { tiposEspecie } from "./types";
+import { IDuplicable } from "./interfaces.js";
+import { Especie } from "./especies.js";
+import { tiposEspecie } from "./types.js";
+import { Low } from "lowdb"
+import { Data } from "./Database/db.js";
+import { normalize } from "./auxFunc.js";
 
-export class RepositorioEspecies extends RepositorioBase<Especie> implements IDuplicable<Especie> {
-
-  constructor(private normalize: (s: string) => string) {
-    super();
+/**
+ * clase que contiene las funciones para registrar y filtrar especies en la base de datos
+ * @param _db - la base de datos
+ */
+export class RepositorioEspecies implements IDuplicable<Especie> {
+  private _db: Low<Data>;
+  constructor(database: Low<Data>) {
+    this._db = database;
   }
 
-  override add(especie: Especie): void {
+  async add(especie: Especie): Promise<void> {
+    this._db.read();
     if (this.isDuplicate(especie)) {
       throw new Error("Especie duplicada");
     }
-    super.add(especie);
+    this._db.data.especie.push(especie);
+    this._db.write();
   }
 
-  update(id: string, cambios: { nombre?: string; origen?: string | null; tipo?: tiposEspecie; 
-                                       esperanzaVida?: number; descripcion?: string }): void {
-    const especie = this.findById(id);
+  async remove(id: string): Promise<void> {
+      await this._db.read();
+      if (typeof this.findById(id) === "undefined") throw new Error("El elemento no existe");
+      this._db.data.especie = this._db.data.especie.filter(i => i.id !== id);
+      await this._db.write();
+    }
+  
+    async findById(id: string): Promise<Especie | undefined> {
+      await this._db.read();
+      return this._db.data.especie.find(e => e.id === id);
+    }
+
+  async update(id: string, cambios: { nombre?: string; origen?: string | null; tipo?: tiposEspecie; 
+                                       esperanzaVida?: number; descripcion?: string }): Promise<void> {
+    await this._db.read();                      
+    const especie = this._db.data.especie.find(e => e.id === id);
     if (!especie) throw new Error("La especie no existe");
     const copia = { ...especie };
 
@@ -40,9 +61,9 @@ export class RepositorioEspecies extends RepositorioBase<Especie> implements IDu
     if (cambios.descripcion !== undefined)
       if (cambios.descripcion.trim() === "") throw new Error("La descripción no puede estar vacía");
 
-    const duplicado = this.objetos.some(e => 
+    const duplicado = this._db.data.especie.some(e => 
       e.id !== copia.id &&
-      this.normalize(e.nombre) === this.normalize(copia.nombre) &&
+      normalize(e.nombre) === normalize(copia.nombre) &&
       e.tipo === copia.tipo &&
       e.origen === copia.origen); 
       
@@ -53,17 +74,26 @@ export class RepositorioEspecies extends RepositorioBase<Especie> implements IDu
     if (cambios.tipo !== undefined) especie.tipo = cambios.tipo;
     if (cambios.esperanzaVida !== undefined) especie.esperanzaVida = cambios.esperanzaVida;
     if (cambios.descripcion !== undefined) especie.descripcion = cambios.descripcion;
+    await this._db.write();
   }
 
-  setNullOrigen(id: string): void {
-    this.objetos.forEach(e=> {
+    async getAll(): Promise<Especie[]> {
+      await this._db.read();
+      return this._db.data.especie;
+    } 
+  
+  async setNullOrigen(id: string): Promise<void> {
+    await this._db.read()
+    this._db.data.especie.forEach(e=> {
       if (e.origen === id) e.origen = null;
     });
+    await this._db.write();
   }
 
-  isDuplicate(other: Especie): boolean { 
-    const duplicado = this.objetos.some(e => 
-      this.normalize(e.nombre) === this.normalize(other.nombre) &&
+  async isDuplicate(other: Especie): Promise<boolean> { 
+    this._db.read();
+    const duplicado = this._db.data.especie.some(e => 
+      normalize(e.nombre) === normalize(other.nombre) &&
       e.tipo === other.tipo &&
       e.origen === other.origen); 
 

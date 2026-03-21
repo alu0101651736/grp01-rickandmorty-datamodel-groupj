@@ -1,4 +1,6 @@
-import { estadosDimension, estadosPersonaje, tiposEspecie, tiposInvento, tipoAfiliacion, tipoLocalizacion } from "./types";
+import { estadosDimension, estadosPersonaje, tiposEspecie, tiposInvento, tipoAfiliacion, tipoLocalizacion } from "./types.js";
+import { Low } from "lowdb"
+import { Data } from "./Database/db.js";
 
 /**
  * Interfaz que define los atributos comunes de los objetos en el sistema.
@@ -80,15 +82,15 @@ export interface ILocalizacion extends IAtributos {
  * Interfaz que define los métodos para un contenedor 
  */
 export interface IRepositorio<T> {
-  add(item: T): void;
-  remove(id: string): void;
-  findById(id: string): T | undefined;
-  getAll(): T[];
+  add(item: T): Promise<void>;
+  remove(id: string): Promise<void>;
+  findById(id: string): Promise<T | undefined>;
+  getAll(): Promise<T[]>;
 }
 
 /**
  * Interfaz que defina un método para comprar dos objetos
  */
 export interface IDuplicable<T> {
-  isDuplicate(other: T): boolean;
+  isDuplicate(other: T): Promise<boolean>;
 }
