@@ -75,3 +75,20 @@ export interface ILocalizacion extends IAtributos {
   /**Población aproximada de habitantes*/
   poblacionAproximada: number;
 }
+
+/**
+ * Interfaz que define los métodos para un contenedor 
+ */
+export interface IRepositorio<T> {
+  add(item: T): void;
+  remove(id: string): void;
+  findById(id: string): T | undefined;
+  getAll(): T[];
+}
+
+/**
+ * Interfaz que defina un método para comprar dos objetos
+ */
+export interface IDuplicable<T> {
+  isDuplicate(other: T): boolean;
+}
