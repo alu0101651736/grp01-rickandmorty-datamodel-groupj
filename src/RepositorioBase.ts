@@ -26,6 +26,6 @@ export abstract class RepositorioBase<T extends { id: string }> implements IRepo
   }
 
   getAll(): T[] {
-    return this.objetos;
+    return [...this.objetos];
   } 
 }
