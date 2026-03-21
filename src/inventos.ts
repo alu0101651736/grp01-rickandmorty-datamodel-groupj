@@ -1,5 +1,5 @@
-import { IInvento } from "./interfaces";
-import { tiposInvento } from "./types";
+import { IInvento } from "./interfaces.js";
+import { tiposInvento } from "./types.js";
 
 
 /**

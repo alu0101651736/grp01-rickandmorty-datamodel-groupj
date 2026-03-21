@@ -1,5 +1,5 @@
-import { tipoAfiliacion, estadosPersonaje } from "./types";
-import { IPersonaje } from "./interfaces";
+import { tipoAfiliacion, estadosPersonaje } from "./types.js";
+import { IPersonaje } from "./interfaces.js";
 
 /**
  * Clase que representa un personaje en el sistema, implementa la interfaz IPersonaje.

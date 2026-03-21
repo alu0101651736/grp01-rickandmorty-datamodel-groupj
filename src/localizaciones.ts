@@ -1,5 +1,5 @@
-import { ILocalizacion } from "./interfaces";
-import { tipoLocalizacion } from "./types";
+import { ILocalizacion } from "./interfaces.js";
+import { tipoLocalizacion } from "./types.js";
 
 /**
  * Clase que representa una localización en el sistema, implementa la interfaz ILocalizacion.

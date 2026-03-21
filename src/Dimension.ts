@@ -1,5 +1,5 @@
-import { IDimension } from "./interfaces";
-import { estadosDimension } from "./types";
+import { IDimension } from "./interfaces.js";
+import { estadosDimension } from "./types.js";
 
 /**
  * Clase que representa una dimension en el sistema, implementa la interfaz IDimension.

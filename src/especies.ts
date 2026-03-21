@@ -1,5 +1,5 @@
-import { tiposEspecie } from "./types";
-import { IEspecie } from "./interfaces";
+import { tiposEspecie } from "./types.js";
+import { IEspecie } from "./interfaces.js";
 
 /**
  * Clase que representa una especie en el sistema, implementa la interfaz IEspecie.
