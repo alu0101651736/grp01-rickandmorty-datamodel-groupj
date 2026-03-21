@@ -4,8 +4,9 @@ import { IRepositorio } from "./interfaces";
  * Clase abstracta que define un repositorio genérico para gestionar colecciones de objetos.
  * 
  * Implementa operaciones básicas de inserción, eliminación y búsqueda por id.
- * 
- * @template T - Tipo de los elementos almacenados en el repositorio. Debe tener una propiedad `id` de tipo string.
+ *
+ * T es el tipo de los elementos almacenados en el repositorio
+ * y debe incluir una propiedad id de tipo string.
  */
 export abstract class RepositorioBase<T extends { id: string }> implements IRepositorio<T> {
   protected objetos: T[] = [];

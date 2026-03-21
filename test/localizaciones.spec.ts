@@ -73,7 +73,7 @@ describe("Localizacion", () => {
       "Lugar",
       "Planeta",
       10,
-      null as any,
+      null,
       "desc"
     );
 
