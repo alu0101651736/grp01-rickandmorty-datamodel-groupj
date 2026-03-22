@@ -184,7 +184,7 @@ async function modificarInventoMenu(manager: GestorMultiversal) {
       name: "nivelPeligro",
       message: "Nivel peligro: (vacio para no modificar)",
       validate: (nivelPeligro) =>
-        (nivelPeligro >= 1 && nivelPeligro <= 10) || isNaN(nivelPeligro)
+        (nivelPeligro >= 1 && nivelPeligro <= 10) || nivelPeligro.length === 0
           ? true
           : "Debe ser entre 1-10",
     },

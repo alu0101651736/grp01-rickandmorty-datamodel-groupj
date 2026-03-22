@@ -181,7 +181,7 @@ async function modificarLocalizacionMenu(manager: GestorMultiversal) {
         name: "poblacionAproximada",
         message: "Poblacion aproximada: (vacio para no modificar)",
         validate: (poblacionAproximada) =>
-          poblacionAproximada >= 0 || isNaN(poblacionAproximada) ? true : "No puede ser negativo",
+          poblacionAproximada >= 0 || poblacionAproximada.length === 0 ? true : "No puede ser negativo",
       },
       {
         type: "text",

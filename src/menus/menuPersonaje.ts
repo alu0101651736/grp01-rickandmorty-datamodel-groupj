@@ -226,7 +226,7 @@ async function modificarPersonajeMenu(
       message: "Nivel intelectual:",
       validate: (nivelInteligencia) =>
         (nivelInteligencia >= 1 && nivelInteligencia <= 10) ||
-        isNaN(nivelInteligencia)
+        nivelInteligencia.length === 0
           ? true
           : "Debe ser entre 1-10 o vacio",
     },

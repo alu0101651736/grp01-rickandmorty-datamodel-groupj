@@ -170,7 +170,7 @@ async function modificarDimensionMenu(manager: GestorMultiversal) {
       name: "nivelTec",
       message: "Nivel tecnológico: (vacio para no modificar)",
       validate: (nivelTec) =>
-        (nivelTec >= 1 && nivelTec <= 10) || isNaN(nivelTec)
+        (nivelTec >= 1 && nivelTec <= 10) || nivelTec.length === 0
           ? true
           : "Debe ser entre 1-10",
     },
