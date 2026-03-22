@@ -19,8 +19,8 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
     async add(personaje: Personaje): Promise<void>{
       await this._db.read()
   
-      if (this.isDuplicate(personaje)) {
-        throw new Error("Dimensión duplicada");
+      if (await this.isDuplicate(personaje)) {
+        throw new Error("Personaje duplicado");
       }
       this._db.data.personaje.push(personaje);
       await this._db.write();
@@ -28,7 +28,7 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
   
     async remove(id: string): Promise<void> {
       await this._db.read();
-      if (typeof this.findById(id) === "undefined") throw new Error("El elemento no existe");
+      if (typeof await this.findById(id) === "undefined") throw new Error("El elemento no existe");
       this._db.data.dimension = this._db.data.dimension.filter(i => i.id !== id);
       await this._db.write();
     }
@@ -41,8 +41,8 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
   async update(id: string, cambios: { nombre?: string; especie?: string | null; dimension?: string | null;
                                 estado?: estadosPersonaje; afiliacion?: tipoAfiliacion; 
                                 nivelInteligencia?: number; descripcion?: string }): Promise<void> {
-    this._db.read();                              
-    const personaje = this._db.data.personaje.find(p => p.id === id);
+    await this._db.read();                              
+    const personaje = await this._db.data.personaje.find(p => p.id === id);
     if (!personaje) throw new Error("El personaje no existe");
     const copia = { ...personaje };
 
@@ -85,6 +85,7 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
     if (cambios.afiliacion !== undefined) personaje.afiliacion = cambios.afiliacion;
     if (cambios.nivelInteligencia !== undefined) personaje.nivelInteligencia = cambios.nivelInteligencia;
     if (cambios.descripcion !== undefined) personaje.descripcion = cambios.descripcion;
+    await this._db.write();
   }
 
   async getAll(): Promise<Personaje[]> {

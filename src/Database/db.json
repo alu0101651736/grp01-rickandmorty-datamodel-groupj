@@ -15,7 +15,18 @@
       "descripcion": "A"
     }
   ],
-  "personaje": [],
+  "personaje": [
+    {
+      "id": "A1",
+      "nombre": "Kai",
+      "especie": "humano",
+      "dimension": "A2",
+      "estado": "clon",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": "4",
+      "descripcion": "Q"
+    }
+  ],
   "invento": [],
   "localizacion": [],
   "especie": []

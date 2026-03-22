@@ -2,6 +2,7 @@ import prompts from "prompts";
 import { GestorMultiversal } from "../gestor.js";
 import { db } from "../Database/db.js";
 import { mostrarMenuDimenison } from "./menuDimension.js";
+import { mostrarMenuPersonaje } from "./menuPersonaje.js"
 
 type OpcionMenuPrincipal =
   | "dimensiones"
@@ -29,24 +30,6 @@ export async function mostrarMenuPrincipal(): Promise<OpcionMenuPrincipal> {
   });
 
   return respuesta.opcion as OpcionMenuPrincipal;
-}
-
-export async function mostrarMenuEntidad(nombre: string): Promise<void> {
-  const respuesta = await prompts({
-    type: "select",
-    name: "accion",
-    message: `Menu de ${nombre}`,
-    choices: [
-      { title: "Anadir", value: "anadir" },
-      { title: "Modificar", value: "modificar" },
-      { title: "Eliminar", value: "eliminar" },
-      { title: "Volver", value: "volver" },
-    ],
-  });
-
-  if (respuesta.accion !== "volver") {
-    console.log(`Accion '${respuesta.accion}' de ${nombre} pendiente de implementar.`);
-  }
 }
 
 export async function mostrarMenuConsultas(): Promise<void> {
@@ -80,16 +63,16 @@ export async function main(): Promise<void> {
         await mostrarMenuDimenison(gestor);
         break;
       case "personajes":
-        await mostrarMenuDimenison(gestor);
+        await mostrarMenuPersonaje(gestor);
         break;
       case "especies":
-        await mostrarMenuDimenison(gestor);
+        console.log("funcion no implementada");
         break;
       case "localizaciones":
-        await mostrarMenuDimenison(gestor);
+        console.log("funcion no implementada");
         break;
       case "inventos":
-        await mostrarMenuDimenison(gestor);
+        console.log("funcion no implementada");
         break;
       case "consultas":
         await mostrarMenuConsultas();
