@@ -25,6 +25,16 @@
       "afiliacion": "Independiente",
       "nivelInteligencia": "4",
       "descripcion": "Q"
+    },
+    {
+      "id": "B2",
+      "nombre": "Kai",
+      "especie": "Humano",
+      "dimension": "A1",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": "6",
+      "descripcion": "A"
     }
   ],
   "invento": [
@@ -45,6 +55,31 @@
       "descripcion": "D"
     }
   ],
-  "localizacion": [],
+  "localizacion": [
+    {
+      "id": "A1",
+      "nombre": "Hawaii",
+      "tipo": "Estacion espacial",
+      "poblacionAproximada": "4",
+      "dimension": "A2",
+      "descripcion": "PO"
+    },
+    {
+      "id": "B3",
+      "nombre": "Hawaii",
+      "tipo": "Planeta",
+      "poblacionAproximada": "5000",
+      "dimension": "A1",
+      "descripcion": "LO"
+    },
+    {
+      "id": "H2",
+      "nombre": "Pennsylvannia",
+      "tipo": "Dimension de bolsillo",
+      "poblacionAproximada": "50",
+      "dimension": "A2",
+      "descripcion": "TE"
+    }
+  ],
   "especie": []
 }
