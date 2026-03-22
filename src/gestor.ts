@@ -3,20 +3,31 @@ import { RepositorioEspecies } from "./RepositorioEspecies.js";
 import { RepositorioPersonajes } from "./RepositorioPersonajes.js";
 import { RepositorioLocalizaciones } from "./RepositorioLocalizaciones.js";
 import { RepositorioInventos } from "./RepositorioInventos.js";
+import { RepositorioEventos } from "./RepositorioEventos.js";
 import { Dimension } from "./Dimension.js";
 import { Especie } from "./especies.js";
 import { Personaje } from "./personajes.js";
 import { Localizacion } from "./localizaciones.js";
 import { Invento } from "./inventos.js";
+import { EventoMultiversal, IEventoInvento, IEventoViaje } from "./interfaces.js";
 import { estadosDimension } from "./types.js";
 import { estadosPersonaje } from "./types.js";
 import { tipoAfiliacion } from "./types.js";
 import { tiposEspecie } from "./types.js";
 import { tipoLocalizacion } from "./types.js";
 import { tiposInvento } from "./types.js";
+import { tipoEventoMultiversal } from "./types.js";
 import { Low } from "lowdb";
 import { Data } from "./Database/db.js";
 import { normalize } from "./auxFunc.js";
+
+function isEventoInvento(evento: EventoMultiversal): evento is IEventoInvento {
+  return evento.tipoEvento === "invento";
+}
+
+function isEventoViaje(evento: EventoMultiversal): evento is IEventoViaje {
+  return evento.tipoEvento === "viaje";
+}
 
 /**
  * clase que contiene las funciones para registrar y filtrar personajes en la base de datos
@@ -34,6 +45,7 @@ export class GestorMultiversal {
   public especiesRepo: RepositorioEspecies;
   public localizacionesRepo: RepositorioLocalizaciones;
   public inventosRepo: RepositorioInventos;
+  public eventosRepo: RepositorioEventos;
 
   constructor(database: Low<Data>) {
     this._db = database;
@@ -42,6 +54,7 @@ export class GestorMultiversal {
     this.especiesRepo = new RepositorioEspecies(this._db);
     this.localizacionesRepo = new RepositorioLocalizaciones(this._db);
     this.inventosRepo = new RepositorioInventos(this._db);
+    this.eventosRepo = new RepositorioEventos(this._db);
   }
   //métodos de inserción
 
@@ -294,6 +307,116 @@ export class GestorMultiversal {
 
   async getPersonajesDimEliminada(): Promise<Personaje[]> {
     return await this.personajesRepo.getNullDimension();
+  }
+
+  //métodos de eventos e informes
+
+  async addEvento(evento: EventoMultiversal): Promise<void> {
+    await this.eventosRepo.add(evento);
+  }
+
+  async getEventos(): Promise<EventoMultiversal[]> {
+    await this._db.read();
+    return this.eventosRepo.getAll();
+  }
+
+  async filterEventosByTipoEvento(tipo: tipoEventoMultiversal): Promise<EventoMultiversal[]> {
+    await this._db.read();
+    return this.eventosRepo.filterByTipoEvento(tipo);
+  }
+
+  async filterEventosByInventoId(inventoId: string): Promise<EventoMultiversal[]> {
+    await this._db.read();
+    return this.eventosRepo.filterByInventoId(inventoId);
+  }
+
+  async getHistorialViajesPorPersonaje(personajeId: string): Promise<IEventoViaje[]> {
+    const eventos = await this.getEventos();
+    return eventos
+      .filter(isEventoViaje)
+      .filter((evento) => normalize(evento.personajeId) === normalize(personajeId))
+      .sort((a, b) => a.fecha.localeCompare(b.fecha));
+  }
+
+  async getNombrePersonajeById(personajeId: string): Promise<string | undefined> {
+    const personaje = await this.personajesRepo.findById(personajeId);
+    return personaje?.nombre;
+  }
+
+  async getInformeDimensionesActivas(): Promise<{ activas: Dimension[]; mediaNivelTec: number }> {
+    const dimensiones = await this.dimensionesRepo.getAll();
+    const activas = dimensiones.filter((dimension) => dimension.estadoDim === "activa");
+    const sumaNivelTec = activas.reduce((suma, dimension) => suma + dimension.nivelTec, 0);
+    const mediaNivelTec = activas.length > 0 ? sumaNivelTec / activas.length : 0;
+    return { activas, mediaNivelTec };
+  }
+
+  async getInformePersonajesMasVariantes(): Promise<{
+    top: Array<{ nombreOriginal: string; totalVersiones: number }>;
+    maximoVersiones: number;
+  }> {
+    const personajes = await this.personajesRepo.getAll();
+    const conteoPorNombre = new Map<string, { nombreOriginal: string; totalVersiones: number }>();
+
+    personajes.forEach((personaje) => {
+      const clave = normalize(personaje.nombre);
+      const actual = conteoPorNombre.get(clave);
+
+      if (!actual) {
+        conteoPorNombre.set(clave, { nombreOriginal: personaje.nombre, totalVersiones: 1 });
+        return;
+      }
+
+      actual.totalVersiones += 1;
+    });
+
+    const candidatos = [...conteoPorNombre.values()].filter((registro) => registro.totalVersiones > 1);
+    if (candidatos.length === 0) {
+      return { top: [], maximoVersiones: 0 };
+    }
+
+    const maximoVersiones = Math.max(...candidatos.map((registro) => registro.totalVersiones));
+    const top = candidatos
+      .filter((registro) => registro.totalVersiones === maximoVersiones)
+      .sort((a, b) => a.nombreOriginal.localeCompare(b.nombreOriginal));
+
+    return { top, maximoVersiones };
+  }
+
+  async getInformeInventosDesplegados(): Promise<Array<{
+    inventoId: string;
+    inventoNombre: string;
+    nivelPeligro: number;
+    localizacionNombre: string;
+  }>> {
+    const eventos = await this.getEventos();
+    const inventos = await this.inventosRepo.getAll();
+    const localizaciones = await this.localizacionesRepo.getAll();
+
+    const eventosInvento = eventos.filter(isEventoInvento);
+    const ultimoEventoPorInvento = new Map<string, IEventoInvento>();
+
+    eventosInvento.forEach((evento) => {
+      const previo = ultimoEventoPorInvento.get(evento.inventoId);
+      if (!previo || evento.fecha > previo.fecha) {
+        ultimoEventoPorInvento.set(evento.inventoId, evento);
+      }
+    });
+
+    return [...ultimoEventoPorInvento.values()]
+      .filter((evento) => evento.accion === "despliegue")
+      .map((evento) => {
+        const invento = inventos.find((item) => item.id === evento.inventoId);
+        const localizacion = localizaciones.find((item) => item.id === evento.localizacionId);
+
+        return {
+          inventoId: evento.inventoId,
+          inventoNombre: invento?.nombre ?? "Invento desconocido",
+          nivelPeligro: invento?.nivelPeligro ?? -1,
+          localizacionNombre: localizacion?.nombre ?? evento.localizacionId,
+        };
+      })
+      .sort((a, b) => b.nivelPeligro - a.nivelPeligro);
   }
 
 }

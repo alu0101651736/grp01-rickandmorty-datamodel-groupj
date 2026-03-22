@@ -1,8 +1,5 @@
 import prompts from "prompts";
 import { GestorMultiversal } from "../gestor.js";
-import { db } from "../Database/db.js";
-import { RepositorioEventos } from "../RepositorioEventos.js";
-import { EventoMultiversal, IEventoInvento, IEventoViaje } from "../interfaces.js";
 import { normalize } from "../auxFunc.js";
 import {
   searchAfiliacionPersonaje,
@@ -22,14 +19,6 @@ import {
   searchTipoInvento,
   searchNivelInvento,
 } from "./buscadores/searchInventos.js";
-
-function isEventoInvento(evento: EventoMultiversal): evento is IEventoInvento {
-  return evento.tipoEvento === "invento";
-}
-
-function isEventoViaje(evento: EventoMultiversal): evento is IEventoViaje {
-  return evento.tipoEvento === "viaje";
-}
 
 /**
  * Funcion que guarda las opciones del menu de consultas
@@ -95,7 +84,6 @@ export async function mostrarMenuConsultas(
  * @param gestor - gestor del multiverso
  */
 async function consultasEventos(gestor: GestorMultiversal): Promise<void> {
-  const eventosRepo = new RepositorioEventos(db);
   let salir = false;
 
   while (!salir) {
@@ -127,7 +115,7 @@ async function consultasEventos(gestor: GestorMultiversal): Promise<void> {
           ],
         });
 
-        const eventosTipo = await eventosRepo.filterByTipoEvento(tipo);
+        const eventosTipo = await gestor.filterEventosByTipoEvento(tipo);
         console.log(eventosTipo);
         break;
       }
@@ -139,7 +127,7 @@ async function consultasEventos(gestor: GestorMultiversal): Promise<void> {
           validate: (valor) => (valor.length > 0 ? true : "Debe tener un ID"),
         });
 
-        const eventosInvento = await eventosRepo.filterByInventoId(inventoId);
+        const eventosInvento = await gestor.filterEventosByInventoId(inventoId);
         console.log(eventosInvento);
         break;
       }
@@ -196,16 +184,12 @@ async function menuInformes(gestor: GestorMultiversal): Promise<void> {
  * @param gestor - gestor del multiverso
  */
 async function informeDimensionesActivas(gestor: GestorMultiversal): Promise<void> {
-  const dimensiones = await gestor.dimensionesRepo.getAll();
-  const activas = dimensiones.filter((dimension) => dimension.estadoDim === "activa");
+  const { activas, mediaNivelTec } = await gestor.getInformeDimensionesActivas();
 
   if (activas.length === 0) {
     console.log("No hay dimensiones activas registradas.");
     return;
   }
-
-  const sumaNivelTec = activas.reduce((suma, dimension) => suma + dimension.nivelTec, 0);
-  const mediaNivelTec = sumaNivelTec / activas.length;
 
   console.log(`Dimensiones activas (${activas.length}):`);
   activas.forEach((dimension) => {
@@ -219,32 +203,12 @@ async function informeDimensionesActivas(gestor: GestorMultiversal): Promise<voi
  * @param gestor - gestor del multiverso
  */
 async function informePersonajesMasVariantes(gestor: GestorMultiversal): Promise<void> {
-  const personajes = await gestor.personajesRepo.getAll();
-  const conteoPorNombre = new Map<string, { nombreOriginal: string; totalVersiones: number }>();
+  const { top, maximoVersiones } = await gestor.getInformePersonajesMasVariantes();
 
-  personajes.forEach((personaje) => {
-    const clave = normalize(personaje.nombre);
-    const actual = conteoPorNombre.get(clave);
-
-    if (!actual) {
-      conteoPorNombre.set(clave, { nombreOriginal: personaje.nombre, totalVersiones: 1 });
-      return;
-    }
-
-    actual.totalVersiones += 1;
-  });
-
-  const candidatos = [...conteoPorNombre.values()].filter((registro) => registro.totalVersiones > 1);
-
-  if (candidatos.length === 0) {
+  if (top.length === 0) {
     console.log("No hay versiones alternativas registradas para ningún personaje.");
     return;
   }
-
-  const maximoVersiones = Math.max(...candidatos.map((registro) => registro.totalVersiones));
-  const top = candidatos
-    .filter((registro) => registro.totalVersiones === maximoVersiones)
-    .sort((a, b) => a.nombreOriginal.localeCompare(b.nombreOriginal));
 
   console.log(`Personajes con más versiones alternativas (${maximoVersiones - 1} alternativas):`);
   top.forEach((registro) => {
@@ -257,35 +221,7 @@ async function informePersonajesMasVariantes(gestor: GestorMultiversal): Promise
  * @param gestor - gestor del multiverso
  */
 async function informeInventosDesplegados(gestor: GestorMultiversal): Promise<void> {
-  const eventosRepo = new RepositorioEventos(db);
-  const eventos = await eventosRepo.getAll();
-  const inventos = await gestor.inventosRepo.getAll();
-  const localizaciones = await gestor.localizacionesRepo.getAll();
-
-  const eventosInvento = eventos.filter(isEventoInvento);
-  const ultimoEventoPorInvento = new Map<string, IEventoInvento>();
-
-  eventosInvento.forEach((evento) => {
-    const previo = ultimoEventoPorInvento.get(evento.inventoId);
-    if (!previo || evento.fecha > previo.fecha) {
-      ultimoEventoPorInvento.set(evento.inventoId, evento);
-    }
-  });
-
-  const desplegados = [...ultimoEventoPorInvento.values()]
-    .filter((evento) => evento.accion === "despliegue")
-    .map((evento) => {
-      const invento = inventos.find((item) => item.id === evento.inventoId);
-      const localizacion = localizaciones.find((item) => item.id === evento.localizacionId);
-
-      return {
-        inventoId: evento.inventoId,
-        inventoNombre: invento?.nombre ?? "Invento desconocido",
-        nivelPeligro: invento?.nivelPeligro ?? -1,
-        localizacionNombre: localizacion?.nombre ?? evento.localizacionId,
-      };
-    })
-    .sort((a, b) => b.nivelPeligro - a.nivelPeligro);
+  const desplegados = await gestor.getInformeInventosDesplegados();
 
   if (desplegados.length === 0) {
     console.log("No hay inventos desplegados actualmente.");
@@ -312,15 +248,8 @@ async function informeHistorialViajes(gestor: GestorMultiversal): Promise<void> 
     validate: (valor) => (valor.length > 0 ? true : "Debe tener un ID"),
   });
 
-  const eventosRepo = new RepositorioEventos(db);
-  const eventos = await eventosRepo.getAll();
-  const viajes = eventos
-    .filter(isEventoViaje)
-    .filter((evento) => normalize(evento.personajeId) === normalize(personajeId))
-    .sort((a, b) => a.fecha.localeCompare(b.fecha));
-
-  const personaje = await gestor.personajesRepo.findById(personajeId);
-  const nombrePersonaje = personaje?.nombre ?? personajeId;
+  const viajes = await gestor.getHistorialViajesPorPersonaje(personajeId);
+  const nombrePersonaje = await gestor.getNombrePersonajeById(personajeId) ?? personajeId;
 
   if (viajes.length === 0) {
     console.log(`No hay viajes registrados para ${nombrePersonaje}.`);
