@@ -73,8 +73,8 @@ export async function searchNivelInvento(
       name: "nivel",
       message: "Nivel de peligro",
       validate: (nivel) =>
-        nivel > 0 && nivel < 11 ? true : "Debe estar entre 1 y 10",
+        Number(nivel) > 0 && Number(nivel) < 11 ? true : "Debe estar entre 1 y 10",
     });
-  let busqueda = await gestor.filterInventosByPeligrosidad(input.nivel);
+  const busqueda = await gestor.filterInventosByPeligrosidad(Number(input.nivel));
   return busqueda;
 }
