@@ -19,8 +19,8 @@ export class RepositorioInventos implements IDuplicable<Invento> {
   async add(invento: Invento): Promise<void>{
       await this._db.read()
   
-      if (this.isDuplicate(invento)) {
-        throw new Error("Dimensión duplicada");
+      if (await this.isDuplicate(invento)) {
+        throw new Error("Invento duplicado");
       }
       this._db.data.invento.push(invento);
       await this._db.write();
@@ -28,7 +28,7 @@ export class RepositorioInventos implements IDuplicable<Invento> {
   
     async remove(id: string): Promise<void> {
       await this._db.read();
-      if (typeof this.findById(id) === "undefined") throw new Error("El elemento no existe");
+      if (typeof await this.findById(id) === "undefined") throw new Error("El elemento no existe");
       this._db.data.invento = this._db.data.invento.filter(i => i.id !== id);
       await this._db.write();
     }
@@ -42,7 +42,7 @@ export class RepositorioInventos implements IDuplicable<Invento> {
                                 nivelPeligro?: number; descripcion?: string }): Promise<void> {
     await this._db.read();
     const invento = this._db.data.invento.find(i => i.id === id);
-    if (!invento) throw new Error("El invento no existe");
+    if (await !invento) throw new Error("El invento no existe");
     const copia = { ...invento };
 
     if (cambios.nombre !== undefined) {
@@ -63,7 +63,7 @@ export class RepositorioInventos implements IDuplicable<Invento> {
     if (cambios.descripcion !== undefined) 
       if (cambios.descripcion.trim() === "") throw new Error("La descripción no puede estar vacía");
 
-    const duplicado = this._db.data.invento.some(i =>
+    const duplicado = await this._db.data.invento.some(i =>
       i.id !== id &&
       normalize(i.nombre) === normalize(copia.nombre) &&
       i.tipo === copia.tipo &&
@@ -115,7 +115,7 @@ export class RepositorioInventos implements IDuplicable<Invento> {
   }
 
   async isDuplicate(other: Invento): Promise<boolean> { 
-    this._db.read();
+    await this._db.read();
     return this._db.data.invento.some(i => 
       normalize(i.nombre) === normalize(other.nombre) &&
       i.tipo === other.tipo &&

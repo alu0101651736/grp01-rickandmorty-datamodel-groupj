@@ -16,8 +16,8 @@ export class RepositorioEspecies implements IDuplicable<Especie> {
   }
 
   async add(especie: Especie): Promise<void> {
-    this._db.read();
-    if (this.isDuplicate(especie)) {
+    await this._db.read();
+    if (await this.isDuplicate(especie)) {
       throw new Error("Especie duplicada");
     }
     this._db.data.especie.push(especie);
@@ -26,7 +26,7 @@ export class RepositorioEspecies implements IDuplicable<Especie> {
 
   async remove(id: string): Promise<void> {
       await this._db.read();
-      if (typeof this.findById(id) === "undefined") throw new Error("El elemento no existe");
+      if (typeof await this.findById(id) === "undefined") throw new Error("El elemento no existe");
       this._db.data.especie = this._db.data.especie.filter(i => i.id !== id);
       await this._db.write();
     }
@@ -91,13 +91,13 @@ export class RepositorioEspecies implements IDuplicable<Especie> {
   }
 
   async isDuplicate(other: Especie): Promise<boolean> { 
-    this._db.read();
+    await this._db.read();
     const duplicado = this._db.data.especie.some(e => 
       normalize(e.nombre) === normalize(other.nombre) &&
       e.tipo === other.tipo &&
       e.origen === other.origen); 
 
-    if (duplicado) return true; 
+    if (await duplicado) return true; 
     return false;
   }
 }

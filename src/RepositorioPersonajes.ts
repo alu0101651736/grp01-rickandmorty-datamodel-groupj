@@ -70,7 +70,7 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
     if (cambios.descripcion !== undefined)
       if (cambios.descripcion.trim() === "") throw new Error("La descripción no puede estar vacía");
 
-    const duplicado = this._db.data.personaje.some(p => 
+    const duplicado = await this._db.data.personaje.some(p => 
       p.id !== copia.id &&
       normalize(p.nombre) === normalize(copia.nombre) &&
       p.especie === copia.especie &&
@@ -138,8 +138,8 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
   }
 
   async isDuplicate(other: Personaje): Promise<boolean> {
-    this._db.read(); 
-    const duplicado = this._db.data.personaje.some(p => 
+    await this._db.read(); 
+    const duplicado = await this._db.data.personaje.some(p => 
       normalize(p.nombre) === normalize(other.nombre) &&
       p.especie === other.especie &&
       p.dimension === other.dimension); 

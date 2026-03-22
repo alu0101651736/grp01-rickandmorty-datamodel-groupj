@@ -20,7 +20,7 @@ export class RepositorioEventos {
       throw new Error("Base de datos no inicializada");
     }
 
-    const existeId = this._db.data.eventos.some((e) => e.id === evento.id);
+    const existeId = await this._db.data.eventos.some((e) => e.id === evento.id);
     if (existeId) {
       throw new Error("El ID del evento ya existe");
     }
