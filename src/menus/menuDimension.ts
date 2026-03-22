@@ -6,7 +6,7 @@ import { Dimension } from "../Dimension.js";
  * Funcion que implementa los metodos de registro de dimensiones
  * @param manager gestor del multiverso
  */
-export async function mostrarMenuDimenison(
+export async function mostrarMenuDimension(
   manager: GestorMultiversal,
 ): Promise<void> {
   let volver = false;

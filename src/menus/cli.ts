@@ -1,9 +1,10 @@
 import prompts from "prompts";
 import { GestorMultiversal } from "../gestor.js";
 import { db } from "../Database/db.js";
-import { mostrarMenuDimenison } from "./menuDimension.js";
+import { mostrarMenuDimension } from "./menuDimension.js";
 import { mostrarMenuPersonaje } from "./menuPersonaje.js";
 import { mostrarMenuEspecie } from "./menuEspecie.js";
+import { mostrarMenuLocalizacion } from "./menuLocalizacion.js";
 
 type OpcionMenuPrincipal =
   | "dimensiones"
@@ -61,7 +62,7 @@ export async function main(): Promise<void> {
 
     switch (opcion) {
       case "dimensiones":
-        await mostrarMenuDimenison(gestor);
+        await mostrarMenuDimension(gestor);
         break;
       case "personajes":
         await mostrarMenuPersonaje(gestor);
@@ -70,7 +71,7 @@ export async function main(): Promise<void> {
         await mostrarMenuEspecie(gestor);
         break;
       case "localizaciones":
-        console.log("funcion no implementada");
+        await mostrarMenuLocalizacion(gestor);
         break;
       case "inventos":
         console.log("funcion no implementada");

@@ -18,8 +18,8 @@ export class RepositorioLocalizaciones implements IDuplicable<Localizacion> {
   async add(localizacion: Localizacion): Promise<void>{
     await this._db.read()
     
-    if (this.isDuplicate(localizacion)) {
-      throw new Error("Dimensión duplicada");
+    if (await this.isDuplicate(localizacion)) {
+      throw new Error("Localizacion duplicada");
     }
     this._db.data.localizacion.push(localizacion);
     await this._db.write();
@@ -27,7 +27,7 @@ export class RepositorioLocalizaciones implements IDuplicable<Localizacion> {
     
   async remove(id: string): Promise<void> {
     await this._db.read();
-    if (typeof this.findById(id) === "undefined") throw new Error("El elemento no existe");
+    if (typeof await this.findById(id) === "undefined") throw new Error("El elemento no existe");
     this._db.data.localizacion = this._db.data.localizacion.filter(i => i.id !== id);
     await this._db.write();
   }
