@@ -2,6 +2,10 @@ import prompts from "prompts";
 import { GestorMultiversal } from "../../gestor.js";
 import { Invento } from "../../inventos.js";
 
+/**
+ * Funcion que busca los inventos de un nivel de un nombre
+ * @param gestor gestor del multiverso
+ */
 export async function searchNombreInvento(
   gestor: GestorMultiversal,
 ): Promise<Invento[]> {
@@ -16,6 +20,10 @@ export async function searchNombreInvento(
   return busqueda;
 }
 
+/**
+ * Funcion que busca los inventos de un nivel de un inventor
+ * @param gestor gestor del multiverso
+ */
 export async function searchInventorInvento(
   gestor: GestorMultiversal,
 ): Promise<Invento[]> {
@@ -30,6 +38,10 @@ export async function searchInventorInvento(
   return busqueda;
 }
 
+/**
+ * Funcion que busca los inventos de un tipo
+ * @param gestor gestor del multiverso
+ */
 export async function searchTipoInvento(
   gestor: GestorMultiversal,
 ): Promise<Invento[]> {
@@ -48,6 +60,10 @@ export async function searchTipoInvento(
   return busqueda;
 }
 
+/**
+ * Funcion que busca los inventos de un nivel de peligro
+ * @param gestor gestor del multiverso
+ */
 export async function searchNivelInvento(
   gestor: GestorMultiversal,
 ): Promise<Invento[]> {

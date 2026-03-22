@@ -2,6 +2,10 @@ import prompts from "prompts";
 import { GestorMultiversal } from "../../gestor.js";
 import { Localizacion } from "../../localizaciones.js";
 
+/**
+ * Funcion que busca las localizaciones de un nombre
+ * @param gestor gestor del multiverso
+ */
 export async function searchNombreLocalizacion(
   gestor: GestorMultiversal,
 ): Promise<Localizacion[]> {
@@ -16,6 +20,10 @@ export async function searchNombreLocalizacion(
   return busqueda;
 }
 
+/**
+ * Funcion que busca las localizaciones de un tipo
+ * @param gestor gestor del multiverso
+ */
 export async function searchTipoLocalizacion(
   gestor: GestorMultiversal,
 ): Promise<Localizacion[]> {
@@ -34,6 +42,10 @@ export async function searchTipoLocalizacion(
   return busqueda;
 }
 
+/**
+ * Funcion que busca las localizaciones de una dimension
+ * @param gestor gestor del multiverso
+ */
 export async function searchDimensionLocalizacion(
   gestor: GestorMultiversal,
 ): Promise<Localizacion[]> {

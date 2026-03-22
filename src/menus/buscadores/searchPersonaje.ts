@@ -2,6 +2,10 @@ import prompts from "prompts";
 import { GestorMultiversal } from "../../gestor.js";
 import { Personaje } from "../../personajes.js";
 
+/**
+ * Funcion que busca los personajes de un nombre
+ * @param gestor gestor del multiverso
+ */
 export async function searchNombrePersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
@@ -49,6 +53,10 @@ export async function searchNombrePersonaje(
   return busqueda;
 }
 
+/**
+ * Funcion que busca los personajes de una especie
+ * @param gestor gestor del multiverso
+ */
 export async function searchEspeciePersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
@@ -82,24 +90,24 @@ export async function searchEspeciePersonaje(
   let busqueda = await gestor.filterPersonajesByEspecie(input.nombre);
   if (input.dato === "nombre") {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? -1 : 1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, true);
     } else {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? 1 : -1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, false);
     }
   } else {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? -1 : 1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, true);
     } else {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? 1 : -1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, false);
     }
   }
   return busqueda;
 }
 
+/**
+ * Funcion que busca los personajes de una afiliacion
+ * @param gestor gestor del multiverso
+ */
 export async function searchAfiliacionPersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
@@ -137,24 +145,24 @@ export async function searchAfiliacionPersonaje(
   let busqueda = await gestor.filterPersonajesByAfiliacion(input.afiliacion);
   if (input.dato === "nombre") {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? -1 : 1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, true);
     } else {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? 1 : -1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, false);
     }
   } else {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? -1 : 1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, true);
     } else {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? 1 : -1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, false);
     }
   }
   return busqueda;
 }
 
+/**
+ * Funcion que busca los personajes que estan en un estado
+ * @param gestor gestor del multiverso
+ */
 export async function searchEstadoPersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
@@ -211,6 +219,10 @@ export async function searchEstadoPersonaje(
   return busqueda;
 }
 
+/**
+ * Funcion que busca los personajes de una dimension
+ * @param gestor gestor del multiverso
+ */
 export async function searchOrigenPersonaje(gestor: GestorMultiversal) {
   let input = await prompts([
     {
@@ -242,19 +254,15 @@ export async function searchOrigenPersonaje(gestor: GestorMultiversal) {
   let busqueda = await gestor.filterPersonajesByDimension(input.nombre);
   if (input.dato === "nombre") {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? -1 : 1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, true);
     } else {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? 1 : -1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, false);
     }
   } else {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? -1 : 1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, true);
     } else {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? 1 : -1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, false);
     }
   }
   return busqueda;
