@@ -1,39 +1,54 @@
-import { describe, expect, test, beforeEach } from "vitest";
+import { describe, expect, test, beforeEach, afterEach } from "vitest";
 import { RepositorioPersonajes } from "../src/RepositorioPersonajes";
 import { Personaje } from "../src/personajes";
+import { Low } from "lowdb";
+import { Data, DefaultData } from "../src/Database/db";
+import { JSONFilePreset } from "lowdb/node";
+import fs from "fs";
+import path from "path";
 
 let repo: RepositorioPersonajes;
+let db: Low<Data>;
+let testDbPath: string;
 
-const normalize = (s: string) =>
-  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+beforeEach(async () => {
+  testDbPath = path.join(__dirname, `testDb_personajes_${Date.now()}.json`);
+  db = await JSONFilePreset(testDbPath, DefaultData);
+  db.data.personaje = [];
+  await db.write();
+  repo = new RepositorioPersonajes(db);
+});
 
-beforeEach(() => {
-  repo = new RepositorioPersonajes(normalize);
+afterEach(() => {
+  if (fs.existsSync(testDbPath)) {
+    fs.unlinkSync(testDbPath);
+  }
 });
 
 describe("RepositorioPersonajes", () => {
 
-  test("add correcto", () => {
+  test("add correcto", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
-    repo.add(p);
-
-    expect(repo.getAll().length).toBe(1);
+    await repo.add(p);
+    const all = await repo.getAll();
+    expect(all.length).toBe(1);
+    await repo.remove("1");
   });
 
-  test("add duplicado", () => {
+  test("add duplicado", async () => {
     const p1 = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
     const p2 = new Personaje("2", "rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
 
-    repo.add(p1);
-
-    expect(() => repo.add(p2)).toThrow("Personaje duplicado");
+    await repo.add(p1);
+    await expect(repo.add(p2)).rejects.toThrow("Personaje duplicado");
+    await repo.remove("1");
   });
 
-  test("update correcto", () => {
+  test("update correcto", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
-    repo.add(p);
+    await repo.add(p);
 
-    repo.update("1", {
+    await repo.update("1", {
       nombre: "Morty",
       especie: "E2",
       dimension: "D2",
@@ -43,7 +58,7 @@ describe("RepositorioPersonajes", () => {
       descripcion: "nuevo"
     });
 
-    const updated = repo.findById("1");
+    const updated = await repo.findById("1");
 
     expect(updated?.nombre).toBe("Morty");
     expect(updated?.especie).toBe("E2");
@@ -52,179 +67,234 @@ describe("RepositorioPersonajes", () => {
     expect(updated?.afiliacion).toBe("Familia Smith");
     expect(updated?.nivelInteligencia).toBe(5);
     expect(updated?.descripcion).toBe("nuevo");
+    await repo.remove("1");
   });
 
-  test("update no existe", () => {
-    expect(() => repo.update("X", {}))
-      .toThrow("El personaje no existe");
+  test("update no existe", async () => {
+    await expect(repo.update("X", {})).rejects.toThrow("El personaje no existe");
   });
 
-  test("update nombre vacío", () => {
+  test("update nombre vacío", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
-    repo.add(p);
+    await repo.add(p);
 
-    expect(() => repo.update("1", { nombre: "" }))
-      .toThrow("El nombre no puede estar vacío");
+    await expect(repo.update("1", { nombre: "" })).rejects.toThrow("El nombre no puede estar vacío");
+    await repo.remove("1");
   });
 
-  test("update especie null", () => {
+  test("update especie null", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
-    repo.add(p);
+    await repo.add(p);
 
-    expect(() => repo.update("1", { especie: null }))
-      .toThrow("La especie no puede ser null");
+    await expect(repo.update("1", { especie: null })).rejects.toThrow("La especie no puede ser null");
+    await repo.remove("1");
   });
 
-  test("update dimension null", () => {
+  test("update dimension null", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
-    repo.add(p);
+    await repo.add(p);
 
-    expect(() => repo.update("1", { dimension: null }))
-      .toThrow("La dimensión no puede ser null");
+    await expect(repo.update("1", { dimension: null })).rejects.toThrow("La dimensión no puede ser null");
+    await repo.remove("1");
   });
 
-  test("update nivel inteligencia inválido", () => {
+  test("update nivel inteligencia inválido (<1)", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
-    repo.add(p);
+    await repo.add(p);
 
-    expect(() => repo.update("1", { nivelInteligencia: 0 }))
-      .toThrow("El nivel de inteligencia debe estar entre 1 y 10");
+    await expect(repo.update("1", { nivelInteligencia: 0 })).rejects.toThrow("El nivel de inteligencia debe estar entre 1 y 10");
+    await repo.remove("1");
   });
 
-  test("update descripción vacía", () => {
+  test("update nivel inteligencia inválido (>10)", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
-    repo.add(p);
+    await repo.add(p);
 
-    expect(() => repo.update("1", { descripcion: "" }))
-      .toThrow("La descripción no puede estar vacía");
+    await expect(repo.update("1", { nivelInteligencia: 11 })).rejects.toThrow("El nivel de inteligencia debe estar entre 1 y 10");
+    await repo.remove("1");
   });
 
-  test("update duplicado", () => {
+  test("update descripción vacía", async () => {
+    const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
+    await repo.add(p);
+
+    await expect(repo.update("1", { descripcion: "" })).rejects.toThrow("La descripción no puede estar vacía");
+    await repo.remove("1");
+  });
+
+  test("update duplicado", async () => {
     const p1 = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
     const p2 = new Personaje("2", "Morty", "E2", "D2", "vivo", "Independiente", 5, "desc");
 
-    repo.add(p1);
-    repo.add(p2);
+    await repo.add(p1);
+    await repo.add(p2);
 
-    expect(() => repo.update("2", {
+    await expect(repo.update("2", {
       nombre: "Rick",
       especie: "E1",
       dimension: "D1"
-    })).toThrow("Personaje duplicado");
+    })).rejects.toThrow("Personaje duplicado");
+    await repo.remove("1");
+    await repo.remove("2");
   });
 
-  test("update sin cambios", () => {
+  test("update sin cambios", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "desc");
-    repo.add(p);
+    await repo.add(p);
 
-    repo.update("1", {});
+    await repo.update("1", {});
 
-    expect(repo.findById("1")).toEqual(p);
+    const result = await repo.findById("1");
+    expect(result).toEqual(p);
+    await repo.remove("1");
   });
 
-  // -------- FILTERS --------
+  test("filterByNombre", async () => {
+    const p1 = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
+    const p2 = new Personaje("2", "Morty", "E2", "D2", "vivo", "Independiente", 5, "d");
+    await repo.add(p1);
+    await repo.add(p2);
 
-  test("filterByNombre", () => {
-    repo.add(new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d"));
-    repo.add(new Personaje("2", "Morty", "E2", "D2", "vivo", "Independiente", 5, "d"));
-
-    expect(repo.filterByNombre("Rick").length).toBe(1);
+    const result = await repo.filterByNombre("Rick");
+    expect(result.length).toBe(1);
+    await repo.remove("1");
+    await repo.remove("2");
   });
 
-  test("filterByEspecie", () => {
-    repo.add(new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d"));
-    repo.add(new Personaje("2", "Morty", "E2", "D2", "vivo", "Independiente", 5, "d"));
+  test("filterByEspecie", async () => {
+    const p1 = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
+    const p2 = new Personaje("2", "Morty", "E2", "D2", "vivo", "Independiente", 5, "d");
+    await repo.add(p1);
+    await repo.add(p2);
 
-    expect(repo.filterByEspecie("E1").length).toBe(1);
+    const result = await repo.filterByEspecie("E1");
+    expect(result.length).toBe(1);
+    await repo.remove("1");
+    await repo.remove("2");
   });
 
-  test("filterByAfiliacion", () => {
-    repo.add(new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d"));
-    repo.add(new Personaje("2", "Morty", "E2", "D2", "vivo", "Familia Smith", 5, "d"));
+  test("filterByAfiliacion", async () => {
+    const p1 = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
+    const p2 = new Personaje("2", "Morty", "E2", "D2", "vivo", "Familia Smith", 5, "d");
+    await repo.add(p1);
+    await repo.add(p2);
 
-    expect(repo.filterByAfiliacion("Familia Smith").length).toBe(1);
+    const result = await repo.filterByAfiliacion("Familia Smith");
+    expect(result.length).toBe(1);
+    await repo.remove("1");
+    await repo.remove("2");
   });
 
-  test("filterByEstado", () => {
-    repo.add(new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d"));
-    repo.add(new Personaje("2", "Morty", "E2", "D2", "muerto", "Independiente", 5, "d"));
+  test("filterByEstado", async () => {
+    const p1 = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
+    const p2 = new Personaje("2", "Morty", "E2", "D2", "muerto", "Independiente", 5, "d");
+    await repo.add(p1);
+    await repo.add(p2);
 
-    expect(repo.filterByEstado("muerto").length).toBe(1);
+    const result = await repo.filterByEstado("muerto");
+    expect(result.length).toBe(1);
+    await repo.remove("1");
+    await repo.remove("2");
   });
 
-  test("filterByDimension", () => {
-    repo.add(new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d"));
-    repo.add(new Personaje("2", "Morty", "E2", "D2", "vivo", "Independiente", 5, "d"));
+  test("filterByDimension", async () => {
+    const p1 = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
+    const p2 = new Personaje("2", "Morty", "E2", "D2", "vivo", "Independiente", 5, "d");
+    await repo.add(p1);
+    await repo.add(p2);
 
-    expect(repo.filterByDimension("D1").length).toBe(1);
+    const result = await repo.filterByDimension("D1");
+    expect(result.length).toBe(1);
+    await repo.remove("1");
+    await repo.remove("2");
   });
 
-  test("setNullDimension", () => {
+  test("setNullDimension", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
-    repo.add(p);
+    await repo.add(p);
 
-    repo.setNullDimension("D1");
+    await repo.setNullDimension("D1");
 
-    expect(repo.findById("1")?.dimension).toBe(null);
+    const updated = await repo.findById("1");
+    expect(updated?.dimension).toBe(null);
+    await repo.remove("1");
   });
 
-  test("setNullEspecie", () => {
+  test("setNullEspecie", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
-    repo.add(p);
+    await repo.add(p);
 
-    repo.setNullEspecie("E1");
+    await repo.setNullEspecie("E1");
 
-    expect(repo.findById("1")?.especie).toBe(null);
+    const updated = await repo.findById("1");
+    expect(updated?.especie).toBe(null);
+    await repo.remove("1");
   });
 
-  test("getNullDimension", () => {
-    const p = new Personaje("1", "Rick", null, null, "vivo", "Independiente", 10, "d");
-    repo.add(p);
+  test("getNullDimension", async () => {
+    const p = new Personaje("1", "Rick", "E1", null, "vivo", "Independiente", 10, "d");
+    await repo.add(p);
 
-    expect(repo.getNullDimension().length).toBe(1);
+    const result = await repo.getNullDimension();
+    expect(result.length).toBe(1);
+    await repo.remove("1");
   });
 
-  test("isDuplicate true", () => {
+  test("isDuplicate true", async () => {
     const p1 = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
     const p2 = new Personaje("2", "rick", "E1", "D1", "vivo", "Independiente", 10, "d");
 
-    repo.add(p1);
+    await repo.add(p1);
 
-    expect(repo.isDuplicate(p2)).toBe(true);
+    const result = await repo.isDuplicate(p2);
+    expect(result).toBe(true);
+    await repo.remove("1");
   });
 
-  test("isDuplicate false", () => {
+  test("isDuplicate false", async () => {
     const p1 = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
     const p2 = new Personaje("2", "Morty", "E2", "D2", "vivo", "Independiente", 5, "d");
 
-    repo.add(p1);
+    await repo.add(p1);
 
-    expect(repo.isDuplicate(p2)).toBe(false);
+    const result = await repo.isDuplicate(p2);
+    expect(result).toBe(false);
+    await repo.remove("1");
   });
 
-  test("setNullDimension no modifica si no coincide", () => {
+  test("setNullDimension no modifica si no coincide", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
-    repo.add(p);
+    await repo.add(p);
 
-    repo.setNullDimension("D2"); // no coincide
+    await repo.setNullDimension("D2");
 
-    expect(repo.findById("1")?.dimension).toBe("D1");
+    const updated = await repo.findById("1");
+    expect(updated?.dimension).toBe("D1");
+    await repo.remove("1");
   });
 
-  test("setNullEspecie no modifica si no coincide", () => {
+  test("setNullEspecie no modifica si no coincide", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
-    repo.add(p);
+    await repo.add(p);
 
-    repo.setNullEspecie("E2"); // no coincide
+    await repo.setNullEspecie("E2");
 
-    expect(repo.findById("1")?.especie).toBe("E1");
+    const updated = await repo.findById("1");
+    expect(updated?.especie).toBe("E1");
+    await repo.remove("1");
   });
 
-  test("getNullDimension vacío", () => {
+  test("getNullDimension vacío", async () => {
     const p = new Personaje("1", "Rick", "E1", "D1", "vivo", "Independiente", 10, "d");
-    repo.add(p);
+    await repo.add(p);
 
-    expect(repo.getNullDimension().length).toBe(0);
+    const result = await repo.getNullDimension();
+    expect(result.length).toBe(0);
+    await repo.remove("1");
+  });
+
+  test("remove lanza error si el elemento no existe", async () => {
+    await expect(repo.remove("X")).rejects.toThrow("El elemento no existe");
   });
 
 });
