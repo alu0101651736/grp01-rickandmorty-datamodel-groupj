@@ -3,9 +3,13 @@ import { GestorMultiversal } from "../gestor.js";
 import { Localizacion } from "../localizaciones.js";
 import { tipoLocalizacion } from "../types.js";
 
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 /**
- * Funcion que implementa los metodos de registro de Localizaciones
- * @param manager gestor del multiverso
+ * Funcion que implementa los metodos de registro de localizaciones.
+ * @param manager - gestor del multiverso.
  */
 export async function mostrarMenuLocalizacion(
   manager: GestorMultiversal,
@@ -15,7 +19,7 @@ export async function mostrarMenuLocalizacion(
     const respuesta = await prompts({
       type: "select",
       name: "accion",
-      message: `Menu de Localizaciones`,
+      message: "Menu de Localizaciones",
       choices: [
         { title: "Anadir", value: "anadir" },
         { title: "Modificar", value: "modificar" },
@@ -34,10 +38,11 @@ export async function mostrarMenuLocalizacion(
       case "modificar":
         await modificarLocalizacionMenu(manager);
         break;
-      case "mostrar":
-        const Localizacion = await manager.localizacionesRepo.getAll();
-        console.log(Localizacion);
+      case "mostrar": {
+        const localizaciones = await manager.localizacionesRepo.getAll();
+        console.log(localizaciones);
         break;
+      }
       case "volver":
         volver = true;
         break;
@@ -46,88 +51,87 @@ export async function mostrarMenuLocalizacion(
 }
 
 /**
- * Funcion que permite añadir localizaciones mediante prompts
- * @param manager el gestor del multiverso
- * @returns true si se ha creado la localizaciones de manera correcta
+ * Funcion que permite anadir localizaciones mediante prompts.
+ * @param manager - el gestor del multiverso.
+ * @returns true si se ha creado la localizacion de manera correcta.
  */
-async function addLocalizacionMenu(manager:GestorMultiversal) {
-  // Prompts para recopilar los datos del objeto
-    const data = await prompts([
-      {
-        type: "text",
-        name: "id",
-        message: "Introduce el ID de la localizacion a añadir:",
-        validate: (id) => (id.length > 0 ? true : "Debe de tener un ID"),
-      },
-      {
-        type: "text",
-        name: "nombre",
-        message: "Nombre:",
-        validate: (name) => (name.length > 0 ? true : "Debe de tener un nombre"),
-      },
-      {
-        type: "select",
-        name: "tipo",
-        message: "Tipo de localizacion:",
-        choices: [
-          { title: "Planeta", value: "Planeta" },
-          { title: "Estacion espacial", value: "Estacion espacial" },
-          { title: "Dimension de bolsillo", value: "Dimension de bolsillo" },
-          { title: "Simulacion virtual", value: "Simulacion virtual" },
-        ],
-      }, 
-      {
-        type: "text",
-        name: "poblacionAproximada",
-        message: "Poblacion aproximada:",
-        validate: (poblacionAproximada) =>
-          poblacionAproximada >= 0 ? true : "No puede ser negativo",
-      },
-      {
-        type: "text",
-        name: "dimension",
-        message: "Dimension de origen:",
-        validate: (dimension) =>
-          dimension.length > 0 ? true : "Debe de tener una dimension de origen",
-      },
-      {
-        type: "text",
-        name: "descripcion",
-        message: "Descripción:",
-        validate: (descripcion) =>
-          descripcion.length > 0 ? true : "Debe de tener descripción",
-      },
-    ]);
-  
-    try {
-      const newDimension = new Localizacion(
-        data.id,
-        data.nombre,
-        data.tipo,
-        data.poblacionAproximada,
-        data.dimension,
-        data.descripcion,
-      );
-  
-      await manager.addLocalizacion(newDimension);
-      console.log(`La localizacion ${data.id} ha sido añadida correctamente`);
-      return true;
-    } catch (error: any) {
-      console.log("Error", error.message);
-      return false;
-    }
+async function addLocalizacionMenu(
+  manager: GestorMultiversal,
+): Promise<boolean> {
+  const data = await prompts([
+    {
+      type: "text",
+      name: "id",
+      message: "Introduce el ID de la localizacion a anadir:",
+      validate: (id) => (id.length > 0 ? true : "Debe de tener un ID"),
+    },
+    {
+      type: "text",
+      name: "nombre",
+      message: "Nombre:",
+      validate: (name) => (name.length > 0 ? true : "Debe de tener un nombre"),
+    },
+    {
+      type: "select",
+      name: "tipo",
+      message: "Tipo de localizacion:",
+      choices: [
+        { title: "Planeta", value: "Planeta" },
+        { title: "Estacion espacial", value: "Estacion espacial" },
+        { title: "Dimension de bolsillo", value: "Dimension de bolsillo" },
+        { title: "Simulacion virtual", value: "Simulacion virtual" },
+      ],
+    },
+    {
+      type: "text",
+      name: "poblacionAproximada",
+      message: "Poblacion aproximada:",
+      validate: (poblacionAproximada) =>
+        Number(poblacionAproximada) >= 0 ? true : "No puede ser negativo",
+    },
+    {
+      type: "text",
+      name: "dimension",
+      message: "Dimension de origen:",
+      validate: (dimension) =>
+        dimension.length > 0 ? true : "Debe de tener una dimension de origen",
+    },
+    {
+      type: "text",
+      name: "descripcion",
+      message: "Descripcion:",
+      validate: (descripcion) =>
+        descripcion.length > 0 ? true : "Debe de tener descripcion",
+    },
+  ]);
+
+  try {
+    const newLocalizacion = new Localizacion(
+      data.id,
+      data.nombre,
+      data.tipo,
+      Number(data.poblacionAproximada),
+      data.dimension,
+      data.descripcion,
+    );
+
+    await manager.addLocalizacion(newLocalizacion);
+    console.log(`La localizacion ${data.id} ha sido anadida correctamente`);
+    return true;
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
+    return false;
+  }
 }
 
 /**
- * Funcion que permite eliminar una localizacion del multiverso
- * @param manager el gestor del multiverso
- * @returns true si se ha eliminado la localizacion de manera correcta
- * @throws Error si no existe el ID que se quiere eliminar
+ * Funcion que permite eliminar una localizacion del multiverso.
+ * @param manager - el gestor del multiverso.
+ * @returns true si se ha eliminado la localizacion de manera correcta.
  */
 async function removeLocalizacionMenu(
   manager: GestorMultiversal,
 ): Promise<boolean> {
-  // Prompt conseguir el id a eliminar
   const { id } = await prompts({
     type: "text",
     name: "id",
@@ -139,24 +143,25 @@ async function removeLocalizacionMenu(
     await manager.removeLocalizacion(id);
     console.log(`La localizacion ${id} ha sido eliminada correctamente.`);
     return true;
-  } catch (error: any) {
-    console.log("Error", error.message);
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
     return false;
   }
 }
 
 /**
- * Funcion que permite modificar los elementos de una localizacion en la base de datos
- * @param manager 
- * @throws Error si no se ha podido modificar la localizacion o si no existe
+ * Funcion que permite modificar los elementos de una localizacion.
+ * @param manager - gestor del multiverso.
+ * @returns true si se ha modificado correctamente.
  */
-async function modificarLocalizacionMenu(manager: GestorMultiversal) {
-  // Prompts para recopilar los datos para modificar
+async function modificarLocalizacionMenu(
+  manager: GestorMultiversal,
+): Promise<boolean> {
   const data = await prompts([
     {
       type: "text",
       name: "id",
-      message: "Introduce el ID de la dimensión a añadir:",
+      message: "Introduce el ID de la localizacion a modificar:",
       validate: (id) => (id.length > 0 ? true : "Debe de tener un ID"),
     },
     {
@@ -165,46 +170,60 @@ async function modificarLocalizacionMenu(manager: GestorMultiversal) {
       message: "Nombre: (vacio para no modificar)",
     },
     {
-        type: "select",
-        name: "tipo",
-        message: "Tipo de localizacion:",
-        choices: [
-          { title: "Sin modificad", value: null},
-          { title: "Planeta", value: "Planeta" },
-          { title: "Estacion espacial", value: "Estacion espacial" },
-          { title: "Dimension de bolsillo", value: "Dimension de bolsillo" },
-          { title: "Simulacion virtual", value: "Simulacion virtual" },
-        ],
-      }, 
+      type: "select",
+      name: "tipo",
+      message: "Tipo de localizacion:",
+      choices: [
+        { title: "Sin modificar", value: null },
+        { title: "Planeta", value: "Planeta" },
+        { title: "Estacion espacial", value: "Estacion espacial" },
+        { title: "Dimension de bolsillo", value: "Dimension de bolsillo" },
+        { title: "Simulacion virtual", value: "Simulacion virtual" },
+      ],
+    },
     {
-        type: "text",
-        name: "poblacionAproximada",
-        message: "Poblacion aproximada: (vacio para no modificar)",
-        validate: (poblacionAproximada) =>
-          poblacionAproximada >= 0 || poblacionAproximada.length === 0 ? true : "No puede ser negativo",
-      },
-      {
-        type: "text",
-        name: "dimension",
-        message: "Dimension de origen: (vacio para no modificar)",
-      },
+      type: "text",
+      name: "poblacionAproximada",
+      message: "Poblacion aproximada: (vacio para no modificar)",
+      validate: (poblacionAproximada) =>
+        poblacionAproximada === "" || Number(poblacionAproximada) >= 0
+          ? true
+          : "No puede ser negativo",
+    },
+    {
+      type: "text",
+      name: "dimension",
+      message: "Dimension de origen: (vacio para no modificar)",
+    },
     {
       type: "text",
       name: "descripcion",
-      message: "Descripción: (vacio para no modificar)",
+      message: "Descripcion: (vacio para no modificar)",
     },
   ]);
+
   try {
-    const mod: any = {};
+    const mod: {
+      nombre?: string;
+      tipo?: tipoLocalizacion;
+      poblacionAproximada?: number;
+      dimension?: string | null;
+      descripcion?: string;
+    } = {};
+
     if (data.nombre) mod.nombre = data.nombre;
-    if (data.tipo !== null) mod.tipo = data.tipo;
-    if (!isNaN(data.poblacionAproximada)) mod.poblacionAproximada = Number(data.poblacionAproximada);
+    if (data.tipo !== null) mod.tipo = data.tipo as tipoLocalizacion;
+    if (data.poblacionAproximada !== "") {
+      mod.poblacionAproximada = Number(data.poblacionAproximada);
+    }
     if (data.dimension) mod.dimension = data.dimension;
     if (data.descripcion) mod.descripcion = data.descripcion;
 
-    const result = await manager.updateLocalizacion(data.id, mod);
+    await manager.updateLocalizacion(data.id, mod);
     console.log(`La localizacion ${data.id} ha sido modificada correctamente.`);
-  } catch (error: any) {
-    console.log("error", error.message);
+    return true;
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
+    return false;
   }
 }

@@ -2,6 +2,10 @@ import prompts from "prompts";
 import { GestorMultiversal } from "../../gestor.js";
 import { Invento } from "../../inventos.js";
 
+/**
+ * Funcion que busca inventos por nombre.
+ * @param gestor - gestor del multiverso.
+ */
 export async function searchNombreInvento(
   gestor: GestorMultiversal,
 ): Promise<Invento[]> {
@@ -12,10 +16,14 @@ export async function searchNombreInvento(
     validate: (nombre) =>
       nombre.length > 0 ? true : "Debe de tener un nombre",
   });
-  let busqueda = await gestor.filterInventosByNombre(input.nombre);
+  const busqueda = await gestor.filterInventosByNombre(input.nombre);
   return busqueda;
 }
 
+/**
+ * Funcion que busca inventos por inventor.
+ * @param gestor - gestor del multiverso.
+ */
 export async function searchInventorInvento(
   gestor: GestorMultiversal,
 ): Promise<Invento[]> {
@@ -26,10 +34,14 @@ export async function searchInventorInvento(
     validate: (nombre) =>
       nombre.length > 0 ? true : "Debe de tener un nombre",
   });
-  let busqueda = await gestor.filterInventosByInventor(input.nombre);
+  const busqueda = await gestor.filterInventosByInventor(input.nombre);
   return busqueda;
 }
 
+/**
+ * Funcion que busca inventos por tipo.
+ * @param gestor - gestor del multiverso.
+ */
 export async function searchTipoInvento(
   gestor: GestorMultiversal,
 ): Promise<Invento[]> {
@@ -44,10 +56,14 @@ export async function searchTipoInvento(
       { title: "Objeto cotidiano absurdo", value: "Objeto cotidiano absurdo" },
     ],
   });
-  let busqueda = await gestor.filterInventosByTipo(input.tipo);
+  const busqueda = await gestor.filterInventosByTipo(input.tipo);
   return busqueda;
 }
 
+/**
+ * Funcion que busca inventos por nivel de peligro.
+ * @param gestor - gestor del multiverso.
+ */
 export async function searchNivelInvento(
   gestor: GestorMultiversal,
 ): Promise<Invento[]> {
@@ -57,8 +73,8 @@ export async function searchNivelInvento(
       name: "nivel",
       message: "Nivel de peligro",
       validate: (nivel) =>
-        nivel > 0 && nivel < 11 ? true : "Debe estar entre 1 y 10",
+        Number(nivel) > 0 && Number(nivel) < 11 ? true : "Debe estar entre 1 y 10",
     });
-  let busqueda = await gestor.filterInventosByPeligrosidad(input.nivel);
+  const busqueda = await gestor.filterInventosByPeligrosidad(Number(input.nivel));
   return busqueda;
 }

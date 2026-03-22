@@ -1,10 +1,15 @@
 import prompts from "prompts";
 import { GestorMultiversal } from "../gestor.js";
 import { Dimension } from "../Dimension.js";
+import { estadosDimension } from "../types.js";
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
 
 /**
- * Funcion que implementa los metodos de registro de dimensiones
- * @param manager gestor del multiverso
+ * Funcion que implementa los metodos de registro de dimensiones.
+ * @param manager - gestor del multiverso.
  */
 export async function mostrarMenuDimension(
   manager: GestorMultiversal,
@@ -14,7 +19,7 @@ export async function mostrarMenuDimension(
     const respuesta = await prompts({
       type: "select",
       name: "accion",
-      message: `Menu de Dimensiones`,
+      message: "Menu de Dimensiones",
       choices: [
         { title: "Anadir", value: "anadir" },
         { title: "Modificar", value: "modificar" },
@@ -23,6 +28,7 @@ export async function mostrarMenuDimension(
         { title: "Volver", value: "volver" },
       ],
     });
+
     switch (respuesta.accion) {
       case "anadir":
         await addDimensionMenu(manager);
@@ -33,10 +39,11 @@ export async function mostrarMenuDimension(
       case "modificar":
         await modificarDimensionMenu(manager);
         break;
-      case "mostrar":
+      case "mostrar": {
         const dimension = await manager.dimensionesRepo.getAll();
         console.log(dimension);
         break;
+      }
       case "volver":
         volver = true;
         break;
@@ -45,17 +52,16 @@ export async function mostrarMenuDimension(
 }
 
 /**
- * Funcion que permite añadir dimensiones mediante prompts
- * @param manager el gestor del multiverso
- * @returns true si se ha creado la dimension de manera correcta
+ * Funcion que permite anadir dimensiones mediante prompts.
+ * @param manager - el gestor del multiverso.
+ * @returns true si se ha creado la dimension de manera correcta.
  */
 async function addDimensionMenu(manager: GestorMultiversal): Promise<boolean> {
-  // Prompts para recopilar los datos del objeto
   const data = await prompts([
     {
       type: "text",
       name: "id",
-      message: "Introduce el ID de la dimensión a añadir:",
+      message: "Introduce el ID de la dimension a anadir:",
       validate: (id) => (id.length > 0 ? true : "Debe de tener un ID"),
     },
     {
@@ -70,23 +76,23 @@ async function addDimensionMenu(manager: GestorMultiversal): Promise<boolean> {
       message: "Estado:",
       choices: [
         { title: "Activa", value: "activa" },
-        { title: "Cuatentena", value: "en cuarentena" },
+        { title: "Cuarentena", value: "en cuarentena" },
         { title: "Destruida", value: "destruida" },
       ],
     },
     {
       type: "text",
       name: "nivelTec",
-      message: "Nivel tecnológico:",
+      message: "Nivel tecnologico:",
       validate: (nivelTec) =>
-        nivelTec >= 1 && nivelTec <= 10 ? true : "Debe ser entre 1-10",
+        Number(nivelTec) >= 1 && Number(nivelTec) <= 10 ? true : "Debe ser entre 1-10",
     },
     {
       type: "text",
       name: "descripcion",
-      message: "Descripción:",
+      message: "Descripcion:",
       validate: (descripcion) =>
-        descripcion.length > 0 ? true : "Debe de tener descripción",
+        descripcion.length > 0 ? true : "Debe de tener descripcion",
     },
   ]);
 
@@ -95,29 +101,27 @@ async function addDimensionMenu(manager: GestorMultiversal): Promise<boolean> {
       data.id,
       data.nombre,
       data.estadoDim,
-      data.nivelTec,
+      Number(data.nivelTec),
       data.descripcion,
     );
 
     await manager.addDimension(newDimension);
-    console.log(`La dimensión ${data.id} ha sido añadida correctamente`);
+    console.log(`La dimension ${data.id} ha sido anadida correctamente`);
     return true;
-  } catch (error: any) {
-    console.log("Error", error.message);
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
     return false;
   }
 }
 
 /**
- * Funcion que permite eliminar una dimension del multiverso
- * @param manager el gestor del multiverso
- * @returns true si se ha eliminado la dimension de manera correcta
- * @throws Error si no existe el ID que se quiere eliminar
+ * Funcion que permite eliminar una dimension del multiverso.
+ * @param manager - el gestor del multiverso.
+ * @returns true si se ha eliminado la dimension de manera correcta.
  */
 async function removeDimensionMenu(
   manager: GestorMultiversal,
 ): Promise<boolean> {
-  // Prompt conseguir el id a eliminar
   const { id } = await prompts({
     type: "text",
     name: "id",
@@ -129,24 +133,23 @@ async function removeDimensionMenu(
     await manager.removeDimension(id);
     console.log(`La dimension ${id} ha sido eliminada correctamente.`);
     return true;
-  } catch (error: any) {
-    console.log("Error", error.message);
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
     return false;
   }
 }
 
 /**
- * Funcion que permite modificar los elementos de una dimension en la base de datos
- * @param manager 
- * @throws Error si no se ha podido modificar la dimension o si no existe
+ * Funcion que permite modificar los elementos de una dimension en la base de datos.
+ * @param manager - gestor del multiverso.
+ * @returns true si se ha modificado correctamente.
  */
-async function modificarDimensionMenu(manager: GestorMultiversal) {
-  // Prompts para recopilar los datos para modificar
+async function modificarDimensionMenu(manager: GestorMultiversal): Promise<boolean> {
   const data = await prompts([
     {
       type: "text",
       name: "id",
-      message: "Introduce el ID de la dimensión a añadir:",
+      message: "Introduce el ID de la dimension a modificar:",
       validate: (id) => (id.length > 0 ? true : "Debe de tener un ID"),
     },
     {
@@ -159,37 +162,46 @@ async function modificarDimensionMenu(manager: GestorMultiversal) {
       name: "estadoDim",
       message: "Estado:",
       choices: [
-        { title: "sin cambio", value: null },
+        { title: "Sin cambio", value: null },
         { title: "Activa", value: "activa" },
-        { title: "Cuatentena", value: "en cuarentena" },
+        { title: "Cuarentena", value: "en cuarentena" },
         { title: "Destruida", value: "destruida" },
       ],
     },
     {
       type: "text",
       name: "nivelTec",
-      message: "Nivel tecnológico: (vacio para no modificar)",
+      message: "Nivel tecnologico: (vacio para no modificar)",
       validate: (nivelTec) =>
-        (nivelTec >= 1 && nivelTec <= 10) || nivelTec.length === 0
+        nivelTec === "" || (Number(nivelTec) >= 1 && Number(nivelTec) <= 10)
           ? true
           : "Debe ser entre 1-10",
     },
     {
       type: "text",
       name: "descripcion",
-      message: "Descripción: (vacio para no modificar)",
+      message: "Descripcion: (vacio para no modificar)",
     },
   ]);
+
   try {
-    const mod: any = {};
+    const mod: {
+      nombre?: string;
+      estadoDim?: estadosDimension;
+      nivelTec?: number;
+      descripcion?: string;
+    } = {};
+
     if (data.nombre) mod.nombre = data.nombre;
-    if (data.estadoDim !== null) mod.estadoDim = data.estadoDim;
-    if (!isNaN(data.nivelTec)) mod.nivelTec = data.nivelTec;
+    if (data.estadoDim !== null) mod.estadoDim = data.estadoDim as estadosDimension;
+    if (data.nivelTec !== "") mod.nivelTec = Number(data.nivelTec);
     if (data.descripcion) mod.descripcion = data.descripcion;
 
-    const result = await manager.updateDimension(data.id, mod);
+    await manager.updateDimension(data.id, mod);
     console.log(`La dimension ${data.id} ha sido modificada correctamente.`);
-  } catch (error: any) {
-    console.log("error", error.message);
+    return true;
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
+    return false;
   }
 }

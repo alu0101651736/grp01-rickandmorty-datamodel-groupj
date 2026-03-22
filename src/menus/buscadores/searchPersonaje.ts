@@ -2,10 +2,14 @@ import prompts from "prompts";
 import { GestorMultiversal } from "../../gestor.js";
 import { Personaje } from "../../personajes.js";
 
+/**
+ * Funcion que busca personajes por nombre.
+ * @param gestor - gestor del multiverso.
+ */
 export async function searchNombrePersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
-  let input = await prompts([
+  const input = await prompts([
     {
       type: "text",
       name: "nombre",
@@ -49,10 +53,14 @@ export async function searchNombrePersonaje(
   return busqueda;
 }
 
+/**
+ * Funcion que busca personajes por especie.
+ * @param gestor - gestor del multiverso.
+ */
 export async function searchEspeciePersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
-  let input = await prompts([
+  const input = await prompts([
     {
       type: "text",
       name: "nombre",
@@ -82,28 +90,28 @@ export async function searchEspeciePersonaje(
   let busqueda = await gestor.filterPersonajesByEspecie(input.nombre);
   if (input.dato === "nombre") {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? -1 : 1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, true);
     } else {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? 1 : -1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, false);
     }
   } else {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? -1 : 1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, true);
     } else {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? 1 : -1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, false);
     }
   }
   return busqueda;
 }
 
+/**
+ * Funcion que busca personajes por afiliacion.
+ * @param gestor - gestor del multiverso.
+ */
 export async function searchAfiliacionPersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
-  let input = await prompts([
+  const input = await prompts([
     {
       type: "select",
       name: "afiliacion",
@@ -137,36 +145,36 @@ export async function searchAfiliacionPersonaje(
   let busqueda = await gestor.filterPersonajesByAfiliacion(input.afiliacion);
   if (input.dato === "nombre") {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? -1 : 1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, true);
     } else {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? 1 : -1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, false);
     }
   } else {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? -1 : 1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, true);
     } else {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? 1 : -1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, false);
     }
   }
   return busqueda;
 }
 
+/**
+ * Funcion que busca personajes por estado.
+ * @param gestor - gestor del multiverso.
+ */
 export async function searchEstadoPersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
-  let input = await prompts([
+  const input = await prompts([
     {
       type: "select",
       name: "estado",
       message: "Estado:",
       choices: [
         { title: "Vivo", value: "vivo" },
-        { title: "Muerto", value: "vivo" },
-        { title: "Desconocido", value: "vivo" },
+        { title: "Muerto", value: "muerto" },
+        { title: "Desconocido", value: "desconocido" },
         { title: "Robot sustituto", value: "robot sustituto" },
         { title: "Clon", value: "clon" },
       ],
@@ -211,8 +219,14 @@ export async function searchEstadoPersonaje(
   return busqueda;
 }
 
-export async function searchOrigenPersonaje(gestor: GestorMultiversal) {
-  let input = await prompts([
+/**
+ * Funcion que busca personajes por dimension de origen.
+ * @param gestor - gestor del multiverso.
+ */
+export async function searchOrigenPersonaje(
+  gestor: GestorMultiversal,
+): Promise<Personaje[]> {
+  const input = await prompts([
     {
       type: "text",
       name: "nombre",
@@ -242,19 +256,15 @@ export async function searchOrigenPersonaje(gestor: GestorMultiversal) {
   let busqueda = await gestor.filterPersonajesByDimension(input.nombre);
   if (input.dato === "nombre") {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? -1 : 1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, true);
     } else {
-      busqueda.sort((one, two) => (one.nombre > two.nombre ? 1 : -1));
+      busqueda = gestor.orderPersonajesByNombre(busqueda, false);
     }
   } else {
     if (input.orden === "ascendiente") {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? -1 : 1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, true);
     } else {
-      busqueda.sort((one, two) =>
-        one.nivelInteligencia > two.nivelInteligencia ? 1 : -1,
-      );
+      busqueda = gestor.orderPersonajesByInteligencia(busqueda, false);
     }
   }
   return busqueda;
