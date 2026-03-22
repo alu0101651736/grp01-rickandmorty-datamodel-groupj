@@ -21,7 +21,7 @@ import {
 
 /**
  * Funcion que guarda las opciones del menu de consultas
- * @param gestor gestor del multiverso
+ * @param gestor - gestor del multiverso
  */
 export async function mostrarMenuConsultas(
   gestor: GestorMultiversal,
@@ -51,7 +51,7 @@ export async function mostrarMenuConsultas(
       case "inventos":
         await consultasInventos(gestor);
         break;
-      case "variantes":
+      case "variantes": {
         const input = await prompts({
           type: "text",
           name: "nombre",
@@ -59,9 +59,10 @@ export async function mostrarMenuConsultas(
           validate: (nombre) =>
             nombre.length > 0 ? true : "Debe de tener un nombre",
         });
-        let result = await gestor.getVariantesPersonaje(input.nombre);
+        const result = await gestor.getVariantesPersonaje(input.nombre);
         console.log(result);
         break;
+      }
       case "volver":
         salir = true;
         break;
@@ -71,7 +72,7 @@ export async function mostrarMenuConsultas(
 
 /**
  * Funcion que guarda las opciones del menu de localizaciones
- * @param gestor gestor del multiverso
+ * @param gestor - gestor del multiverso
  */
 export async function consultasLocalizaciones(gestor: GestorMultiversal) {
   let salir = false;
@@ -87,7 +88,6 @@ export async function consultasLocalizaciones(gestor: GestorMultiversal) {
         { title: "Volver", value: "volver" },
       ],
     });
-    let input;
     let busqueda;
     switch (respuesta["consulta localizacion"]) {
       case "nombre":
@@ -111,7 +111,7 @@ export async function consultasLocalizaciones(gestor: GestorMultiversal) {
 
 /**
  * Funcion que guarda las opciones del menu de inventos
- * @param gestor gestor del multiverso
+ * @param gestor - gestor del multiverso
  */
 export async function consultasInventos(gestor: GestorMultiversal) {
   let salir = false;
@@ -128,7 +128,6 @@ export async function consultasInventos(gestor: GestorMultiversal) {
         { title: "Volver", value: "volver" },
       ],
     });
-    let input;
     let busqueda;
     switch (respuesta["consulta inventos"]) {
       case "nombre":
@@ -156,7 +155,7 @@ export async function consultasInventos(gestor: GestorMultiversal) {
 
 /**
  * Funcion que guarda las opciones del menu de personajes
- * @param gestor gestor del multiverso
+ * @param gestor - gestor del multiverso
  */
 export async function consultasPersonaje(gestor: GestorMultiversal) {
   let salir = false;
@@ -174,8 +173,6 @@ export async function consultasPersonaje(gestor: GestorMultiversal) {
         { title: "Volver", value: "volver" },
       ],
     });
-    let opcion;
-    let input;
     let busqueda;
     switch (respuesta["consulta personaje"]) {
       case "nombre":
