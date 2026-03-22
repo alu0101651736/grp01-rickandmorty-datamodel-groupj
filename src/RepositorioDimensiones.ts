@@ -81,8 +81,9 @@ export class RepositorioDimensiones implements IDuplicable<Dimension>, IReposito
 
   async isDuplicate(other: Dimension): Promise<boolean> { 
     await this._db.read();
-    const duplicado = this._db.data.dimension.some(d => d.id === other.id); 
-    if (await duplicado) return true; 
+    const duplicadoPorId = this._db.data.dimension.some(d => d.id === other.id);
+    const duplicadoPorNombre = this._db.data.dimension.some(d => normalize(d.nombre) === normalize(other.nombre));
+    if (duplicadoPorId || duplicadoPorNombre) return true; 
     return false;
   }
 }
