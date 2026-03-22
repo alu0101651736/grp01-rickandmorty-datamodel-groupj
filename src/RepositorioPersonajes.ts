@@ -100,7 +100,7 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
 
   async filterByEspecie(especie: string): Promise<Personaje[]> {
     this._db.read();
-    return this._db.data.personaje.filter(p => normalize(p.especie) === normalize(especie));
+    return this._db.data.personaje.filter(p => p.especie !== null && normalize(p.especie) === normalize(especie));
   }
 
   async filterByAfiliacion(afiliacion: tipoAfiliacion): Promise<Personaje[]> {
@@ -115,7 +115,7 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
 
   async filterByDimension(dimension: string): Promise<Personaje[]> {
     this._db.read();
-    return this._db.data.personaje.filter(p => p.dimension === dimension);
+    return this._db.data.personaje.filter(p => p.dimension !== null && p.dimension === dimension);
   }
 
   async setNullDimension(id: string): Promise<void> {
