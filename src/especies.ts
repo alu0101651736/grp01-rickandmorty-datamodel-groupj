@@ -1,5 +1,5 @@
-import { tiposEspecie } from "./types";
-import { IEspecie } from "./interfaces";
+import { tiposEspecie } from "./types.js";
+import { IEspecie } from "./interfaces.js";
 
 /**
  * Clase que representa una especie en el sistema, implementa la interfaz IEspecie.
@@ -17,14 +17,15 @@ export class Especie implements IEspecie {
   constructor (
     public readonly id: string,
     public nombre: string,
-    public origen: string,
+    public origen: string | null,
     public tipo: tiposEspecie,
     public esperanzaVida: number,
     public descripcion: string
   ) {
     if (id.trim() === "") throw new Error("ID vacío");
     if (nombre.trim() === "") throw new Error("Nombre vacío");
-    if (origen.trim() === "") throw new Error("Origen vacío");
+    if (typeof origen === "string")
+      if (origen.trim() === "") throw new Error("Origen vacío");
     if (descripcion.trim() === "") throw new Error("Descripción vacía");
     if (esperanzaVida <= 0) throw new Error("Esperanza de vida inválida"); 
   }

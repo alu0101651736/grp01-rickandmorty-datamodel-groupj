@@ -1,5 +1,5 @@
-import { tipoAfiliacion, estadosPersonaje } from "./types";
-import { IPersonaje } from "./interfaces";
+import { tipoAfiliacion, estadosPersonaje } from "./types.js";
+import { IPersonaje } from "./interfaces.js";
 
 /**
  * Clase que representa un personaje en el sistema, implementa la interfaz IPersonaje.
@@ -20,8 +20,8 @@ export class Personaje implements IPersonaje {
   constructor (
     public readonly id: string,
     public nombre: string,
-    public especie: string, // ID de la especie
-    public dimension: string, // ID de la dimensión de origen
+    public especie: string | null, // ID de la especie
+    public dimension: string | null, // ID de la dimensión de origen
     public estado: estadosPersonaje,
     public afiliacion: tipoAfiliacion,
     public nivelInteligencia: number,
@@ -29,8 +29,10 @@ export class Personaje implements IPersonaje {
   ){
     if (id.trim() === "") throw new Error("ID vacío");
     if (nombre.trim() === "") throw new Error("Nombre vacío");
-    if (especie.trim() === "") throw new Error("Especie vacía");
-    if (dimension.trim() === "") throw new Error("Dimensión de origen vacía");
+    if (typeof especie === "string")
+      if (especie.trim() === "") throw new Error("Especie vacía");
+    if (typeof dimension === "string")
+      if (dimension.trim() === "") throw new Error("Dimensión de origen vacía");
     if (descripcion.trim() === "") throw new Error("Descripción vacía");
     if (nivelInteligencia <= 0 || nivelInteligencia > 10) throw new Error("Nivel de inteligencia inválido");     
   }

@@ -1,0 +1,803 @@
+{
+  "dimension": [
+    {
+      "id": "D-001",
+      "nombre": "C-137",
+      "estadoDim": "activa",
+      "nivelTec": 8,
+      "descripcion": "Dimensión original de Rick y Morty"
+    },
+    {
+      "id": "D-002",
+      "nombre": "C-500A",
+      "estadoDim": "activa",
+      "nivelTec": 7,
+      "descripcion": "Dimensión con nivel tecnológico avanzado"
+    },
+    {
+      "id": "D-003",
+      "nombre": "J19ζ7",
+      "estadoDim": "activa",
+      "nivelTec": 6,
+      "descripcion": "Dimensión explorada en aventuras tempranas"
+    },
+    {
+      "id": "D-004",
+      "nombre": "Cronenberg",
+      "estadoDim": "destruida",
+      "nivelTec": 1,
+      "descripcion": "Dimensión de los Cronenbergs"
+    },
+    {
+      "id": "D-005",
+      "nombre": "Burbuja de Mantequilla",
+      "estadoDim": "destruida",
+      "nivelTec": 2,
+      "descripcion": "Dimensión ficticia benevolente"
+    },
+    {
+      "id": "D-006",
+      "nombre": "Puro Plasma",
+      "estadoDim": "activa",
+      "nivelTec": 9,
+      "descripcion": "Dimensión de seres de plasma"
+    },
+    {
+      "id": "D-007",
+      "nombre": "Agua Purificada",
+      "estadoDim": "en cuarentena",
+      "nivelTec": 1,
+      "descripcion": "Dimensión en cuarentena"
+    },
+    {
+      "id": "D-008",
+      "nombre": "Gotecha",
+      "estadoDim": "activa",
+      "nivelTec": 3,
+      "descripcion": "Dimensión primitiva"
+    },
+    {
+      "id": "D-009",
+      "nombre": "Citadela",
+      "estadoDim": "activa",
+      "nivelTec": 10,
+      "descripcion": "Sede del Consejo de Ricks"
+    },
+    {
+      "id": "D-010",
+      "nombre": "Tierra Alienígena",
+      "estadoDim": "activa",
+      "nivelTec": 5,
+      "descripcion": "Planeta de insectos gigantes"
+    },
+    {
+      "id": "D-011",
+      "nombre": "Vehemencia",
+      "estadoDim": "activa",
+      "nivelTec": 4,
+      "descripcion": "Dimensión de emociones vivientes"
+    },
+    {
+      "id": "D-012",
+      "nombre": "Fantasmárica",
+      "estadoDim": "activa",
+      "nivelTec": 6,
+      "descripcion": "Dimensión con espíritus"
+    },
+    {
+      "id": "D-013",
+      "nombre": "Radiante",
+      "estadoDim": "destruida",
+      "nivelTec": 1,
+      "descripcion": "Dimensión radiactiva"
+    },
+    {
+      "id": "D-014",
+      "nombre": "Espejo Cósmico",
+      "estadoDim": "activa",
+      "nivelTec": 7,
+      "descripcion": "Dimensión reflejo"
+    },
+    {
+      "id": "D-015",
+      "nombre": "Gazorpazorp",
+      "estadoDim": "activa",
+      "nivelTec": 8,
+      "descripcion": "Planeta de los Gazorps"
+    },
+    {
+      "id": "D-100",
+      "nombre": "Gala",
+      "estadoDim": "activa",
+      "nivelTec": 7,
+      "descripcion": "nosa"
+    }
+  ],
+  "personaje": [
+    {
+      "id": "P001",
+      "nombre": "Rick Sánchez",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Consejo de Ricks",
+      "nivelInteligencia": 10,
+      "descripcion": "Científico genio"
+    },
+    {
+      "id": "P002",
+      "nombre": "Morty Smith",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 4,
+      "descripcion": "Adolescente aventurero"
+    },
+    {
+      "id": "P003",
+      "nombre": "Jerry Smith",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Familia Smith",
+      "nivelInteligencia": 2,
+      "descripcion": "Padre mediocre"
+    },
+    {
+      "id": "P004",
+      "nombre": "Beth Smith",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Familia Smith",
+      "nivelInteligencia": 6,
+      "descripcion": "Veterinaria ambiciosa"
+    },
+    {
+      "id": "P005",
+      "nombre": "Summer Smith",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Familia Smith",
+      "nivelInteligencia": 7,
+      "descripcion": "Adolescente inteligente"
+    },
+    {
+      "id": "P006",
+      "nombre": "Evil Morty",
+      "especie": "E001",
+      "dimension": "D-002",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 9,
+      "descripcion": "Versión malvada de Morty"
+    },
+    {
+      "id": "P007",
+      "nombre": "Pickle Rick",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 10,
+      "descripcion": "Rick convertido en pepinillo"
+    },
+    {
+      "id": "P008",
+      "nombre": "Jessica",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 5,
+      "descripcion": "Novia de Morty"
+    },
+    {
+      "id": "P009",
+      "nombre": "Mr. Poopybutthole",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 3,
+      "descripcion": "Personaje universo paralelo"
+    },
+    {
+      "id": "P010",
+      "nombre": "Birdperson",
+      "especie": "E005",
+      "dimension": "D-003",
+      "estado": "muerto",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 8,
+      "descripcion": "Amigo que habla como pájaro"
+    },
+    {
+      "id": "P011",
+      "nombre": "Squanchy",
+      "especie": "E002",
+      "dimension": "D-015",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 4,
+      "descripcion": "Amigo gato alienígena"
+    },
+    {
+      "id": "P012",
+      "nombre": "Mr. Meeseeks",
+      "especie": "E003",
+      "dimension": "D-009",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 1,
+      "descripcion": "Meeseeks que siempre aparece"
+    },
+    {
+      "id": "P013",
+      "nombre": "Unity",
+      "especie": "E006",
+      "dimension": "D-006",
+      "estado": "desconocido",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 10,
+      "descripcion": "Entidad colmena de plasma"
+    },
+    {
+      "id": "P014",
+      "nombre": "Gearhead",
+      "especie": "E010",
+      "dimension": "D-009",
+      "estado": "vivo",
+      "afiliacion": "Consejo de Ricks",
+      "nivelInteligencia": 8,
+      "descripcion": "Cyborg experto en tecnología"
+    },
+    {
+      "id": "P015",
+      "nombre": "Million Ants",
+      "especie": "E007",
+      "dimension": "D-010",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 7,
+      "descripcion": "Colonia de hormigas guerreras"
+    },
+    {
+      "id": "P016",
+      "nombre": "Abradolf Lincler",
+      "especie": "E001",
+      "dimension": "D-009",
+      "estado": "muerto",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 6,
+      "descripcion": "Clón experimental fallido"
+    },
+    {
+      "id": "P017",
+      "nombre": "Arthricia",
+      "especie": "E003",
+      "dimension": "D-009",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 2,
+      "descripcion": "Meeseeks artista"
+    },
+    {
+      "id": "P018",
+      "nombre": "Hemorrhage",
+      "especie": "E007",
+      "dimension": "D-010",
+      "estado": "muerto",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 5,
+      "descripcion": "Insecto guerrero vencido"
+    },
+    {
+      "id": "P019",
+      "nombre": "Krombopulos Michael",
+      "especie": "E004",
+      "dimension": "D-005",
+      "estado": "muerto",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 7,
+      "descripcion": "Traficante de armas"
+    },
+    {
+      "id": "P020",
+      "nombre": "Trandor",
+      "especie": "E007",
+      "dimension": "D-010",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 6,
+      "descripcion": "Lider de insectos"
+    },
+    {
+      "id": "P021",
+      "nombre": "Lucius Needful",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 9,
+      "descripcion": "Vendedor de deseos"
+    },
+    {
+      "id": "P022",
+      "nombre": "Steely Dan",
+      "especie": "E001",
+      "dimension": "D-002",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 8,
+      "descripcion": "Psicópata sin emociones"
+    },
+    {
+      "id": "P023",
+      "nombre": "Ghostly Gary",
+      "especie": "E009",
+      "dimension": "D-012",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 4,
+      "descripcion": "Fantasma tipo Clark Kent"
+    },
+    {
+      "id": "P024",
+      "nombre": "Glexo Slim Slim",
+      "especie": "E002",
+      "dimension": "D-015",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 5,
+      "descripcion": "Alienígena cómico"
+    },
+    {
+      "id": "P025",
+      "nombre": "Revolio Clockberg Jr",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 9,
+      "descripcion": "Personaje importante mysterio"
+    },
+    {
+      "id": "P026",
+      "nombre": "Physician",
+      "especie": "E001",
+      "dimension": "D-003",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 7,
+      "descripcion": "Doctor de aventuras"
+    },
+    {
+      "id": "P027",
+      "nombre": "Scroopy",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 6,
+      "descripcion": "Trabajador en nave"
+    },
+    {
+      "id": "P028",
+      "nombre": "Tinyrick",
+      "especie": "E001",
+      "dimension": "D-001",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 10,
+      "descripcion": "Rick en cuerpo pequeño"
+    },
+    {
+      "id": "P029",
+      "nombre": "Truant Officer Alien",
+      "especie": "E002",
+      "dimension": "D-015",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 5,
+      "descripcion": "Supervisor escolar alienígena"
+    },
+    {
+      "id": "P030",
+      "nombre": "Fart",
+      "especie": "E006",
+      "dimension": "D-006",
+      "estado": "vivo",
+      "afiliacion": "Independiente",
+      "nivelInteligencia": 9,
+      "descripcion": "Entidad gaseosa inteligente"
+    }
+  ],
+  "invento": [
+    {
+      "id": "I001",
+      "nombre": "Portal Gun",
+      "inventor": "P001",
+      "tipo": "Dispositivo de viaje",
+      "nivelPeligro": 10,
+      "descripcion": "Arma que crea portales interdimensionales"
+    },
+    {
+      "id": "I002",
+      "nombre": "Cronómetro de Neutrinos",
+      "inventor": "P001",
+      "tipo": "Dispositivo de viaje",
+      "nivelPeligro": 8,
+      "descripcion": "Viaja en el tiempo"
+    },
+    {
+      "id": "I003",
+      "nombre": "Brazo de Plumbus",
+      "inventor": "P001",
+      "tipo": "Objeto cotidiano absurdo",
+      "nivelPeligro": 2,
+      "descripcion": "Herramienta versátil común"
+    },
+    {
+      "id": "I004",
+      "nombre": "Rayo Desintegrador",
+      "inventor": "P001",
+      "tipo": "Arma",
+      "nivelPeligro": 9,
+      "descripcion": "Desintegra materia instantáneamente"
+    },
+    {
+      "id": "I005",
+      "nombre": "Dispositivo de Teletransportación",
+      "inventor": "P001",
+      "tipo": "Dispositivo de viaje",
+      "nivelPeligro": 7,
+      "descripcion": "Teletransporta personas corta distancia"
+    },
+    {
+      "id": "I006",
+      "nombre": "Biomasa Mejorada",
+      "inventor": "P001",
+      "tipo": "Biotecnologia",
+      "nivelPeligro": 8,
+      "descripcion": "Mejora atributos biológicos"
+    },
+    {
+      "id": "I007",
+      "nombre": "Generador de Meeseeks",
+      "inventor": "P001",
+      "tipo": "Biotecnologia",
+      "nivelPeligro": 6,
+      "descripcion": "Crea entidades para cumplir deseos"
+    },
+    {
+      "id": "I008",
+      "nombre": "Jetpack de Antimateria",
+      "inventor": "P001",
+      "tipo": "Dispositivo de viaje",
+      "nivelPeligro": 9,
+      "descripcion": "Vuelo con propulsión antimaterial"
+    },
+    {
+      "id": "I009",
+      "nombre": "Casco Cerebral",
+      "inventor": "P001",
+      "tipo": "Biotecnologia",
+      "nivelPeligro": 8,
+      "descripcion": "Conecta mentes entre dimensiones"
+    },
+    {
+      "id": "I010",
+      "nombre": "Droga de Aumento Mental",
+      "inventor": "P001",
+      "tipo": "Biotecnologia",
+      "nivelPeligro": 10,
+      "descripcion": "Incrementa inteligencia dramáticamente"
+    },
+    {
+      "id": "I011",
+      "nombre": "Botella de Espacio Negativo",
+      "inventor": "P001",
+      "tipo": "Objeto cotidiano absurdo",
+      "nivelPeligro": 3,
+      "descripcion": "Espacio infinito dentro"
+    },
+    {
+      "id": "I012",
+      "nombre": "Clon de Rick Improvisado",
+      "inventor": "P001",
+      "tipo": "Biotecnologia",
+      "nivelPeligro": 5,
+      "descripcion": "Clon de corta durabilidad"
+    },
+    {
+      "id": "I013",
+      "nombre": "Arma de Probabilidad",
+      "inventor": "P001",
+      "tipo": "Arma",
+      "nivelPeligro": 9,
+      "descripcion": "Manipula probabilidades del universo"
+    },
+    {
+      "id": "I014",
+      "nombre": "Escudo Demoníaco",
+      "inventor": "P001",
+      "tipo": "Arma",
+      "nivelPeligro": 7,
+      "descripcion": "Protector energético demoníaco"
+    },
+    {
+      "id": "I015",
+      "nombre": "Traje de Invisibilidad Cuántica",
+      "inventor": "P001",
+      "tipo": "Dispositivo de viaje",
+      "nivelPeligro": 8,
+      "descripcion": "Invisibilidad a nivel subatómico"
+    }
+  ],
+  "localizacion": [
+    {
+      "id": "L001",
+      "nombre": "Casa Smith",
+      "tipo": "Planeta",
+      "poblacionAproximada": 4,
+      "dimension": "D-001",
+      "descripcion": "Casa residencia en Tierra"
+    },
+    {
+      "id": "L002",
+      "nombre": "Citadela de los Ricks",
+      "tipo": "Estacion espacial",
+      "poblacionAproximada": 1000000,
+      "dimension": "D-009",
+      "descripcion": "Centro del Consejo de Ricks"
+    },
+    {
+      "id": "L003",
+      "nombre": "Titán",
+      "tipo": "Planeta",
+      "poblacionAproximada": 250000,
+      "dimension": "D-010",
+      "descripcion": "Luna con océanos de metano"
+    },
+    {
+      "id": "L004",
+      "nombre": "Gazorpazorp",
+      "tipo": "Planeta",
+      "poblacionAproximada": 500000,
+      "dimension": "D-015",
+      "descripcion": "Planeta hogar de Gazorps"
+    },
+    {
+      "id": "L005",
+      "nombre": "Piscina Recreativa",
+      "tipo": "Simulacion virtual",
+      "poblacionAproximada": 5000,
+      "dimension": "D-005",
+      "descripcion": "Dimensión burbuja de mantequilla"
+    },
+    {
+      "id": "L006",
+      "nombre": "Escuela Buenas Noches",
+      "tipo": "Planeta",
+      "poblacionAproximada": 500,
+      "dimension": "D-001",
+      "descripcion": "Escuela en Tierra C-137"
+    },
+    {
+      "id": "L007",
+      "nombre": "Patio del Club",
+      "tipo": "Dimension de bolsillo",
+      "poblacionAproximada": 1000,
+      "dimension": "D-009",
+      "descripcion": "Club secreto de alienígenas"
+    },
+    {
+      "id": "L008",
+      "nombre": "Área de Pruebas",
+      "tipo": "Planeta",
+      "poblacionAproximada": 100,
+      "dimension": "D-001",
+      "descripcion": "Laboratorio de Rick"
+    },
+    {
+      "id": "L009",
+      "nombre": "Hive-Seven",
+      "tipo": "Planeta",
+      "poblacionAproximada": 50000,
+      "dimension": "D-010",
+      "descripcion": "Nido de insectos inteligentes"
+    },
+    {
+      "id": "L010",
+      "nombre": "Planeta Jerryboree",
+      "tipo": "Planeta",
+      "poblacionAproximada": 10000,
+      "dimension": "D-001",
+      "descripcion": "Centro de cuidado Jerry"
+    },
+    {
+      "id": "L011",
+      "nombre": "Núcleo Radiante",
+      "tipo": "Planeta",
+      "poblacionAproximada": 1000000,
+      "dimension": "D-013",
+      "descripcion": "Centro radiactivo destruido"
+    },
+    {
+      "id": "L012",
+      "nombre": "Monasterio de Viejo Señor",
+      "tipo": "Planeta",
+      "poblacionAproximada": 50,
+      "dimension": "D-003",
+      "descripcion": "Templo antiguo alienígena"
+    },
+    {
+      "id": "L013",
+      "nombre": "Estación Pura Agua",
+      "tipo": "Estacion espacial",
+      "poblacionAproximada": 5000,
+      "dimension": "D-007",
+      "descripcion": "En cuarentena"
+    },
+    {
+      "id": "L014",
+      "nombre": "Ciudad Gotecha",
+      "tipo": "Planeta",
+      "poblacionAproximada": 100000,
+      "dimension": "D-008",
+      "descripcion": "Capital de Gotecha"
+    },
+    {
+      "id": "L015",
+      "nombre": "Castillo de Cristal",
+      "tipo": "Planeta",
+      "poblacionAproximada": 2000,
+      "dimension": "D-014",
+      "descripcion": "Palacio espejo cósmico"
+    },
+    {
+      "id": "L016",
+      "nombre": "Mercado Intergaláctico",
+      "tipo": "Estacion espacial",
+      "poblacionAproximada": 50000,
+      "dimension": "D-009",
+      "descripcion": "Centro de comercio alien"
+    },
+    {
+      "id": "L017",
+      "nombre": "Playa Paradiso",
+      "tipo": "Planeta",
+      "poblacionAproximada": 100,
+      "dimension": "D-005",
+      "descripcion": "Playa de dimensión destruida"
+    },
+    {
+      "id": "L018",
+      "nombre": "Torre Cronómetra",
+      "tipo": "Planeta",
+      "poblacionAproximada": 500,
+      "dimension": "D-004",
+      "descripcion": "Torre dimensional Cronenberg"
+    },
+    {
+      "id": "L019",
+      "nombre": "Nube de Polvo Estelar",
+      "tipo": "Estacion espacial",
+      "poblacionAproximada": 10000,
+      "dimension": "D-006",
+      "descripcion": "En el espacio profundo"
+    },
+    {
+      "id": "L020",
+      "nombre": "Palacio del Rey",
+      "tipo": "Planeta",
+      "poblacionAproximada": 5000,
+      "dimension": "D-015",
+      "descripcion": "Residencia real Gazorp"
+    }
+  ],
+  "especie": [
+    {
+      "id": "E001",
+      "nombre": "Humano",
+      "origen": "D-001",
+      "tipo": "humanoide",
+      "esperanzaVida": 80,
+      "descripcion": "Especie terrestre inteligente"
+    },
+    {
+      "id": "E002",
+      "nombre": "Gazorp",
+      "origen": "D-015",
+      "tipo": "humanoide",
+      "esperanzaVida": 70,
+      "descripcion": "Raza de pequeños humanoides"
+    },
+    {
+      "id": "E003",
+      "nombre": "Meeseeks",
+      "origen": "D-009",
+      "tipo": "amorfo",
+      "esperanzaVida": 10,
+      "descripcion": "Seres creados para cumplir deseos"
+    },
+    {
+      "id": "E004",
+      "nombre": "Zigerion",
+      "origen": "D-015",
+      "tipo": "humanoide",
+      "esperanzaVida": 60,
+      "descripcion": "Raza de estafadores extraterrestres"
+    },
+    {
+      "id": "E005",
+      "nombre": "Kronenberg",
+      "origen": "D-004",
+      "tipo": "amorfo",
+      "esperanzaVida": 50,
+      "descripcion": "Mutantes de gravedad corporal cambiante"
+    },
+    {
+      "id": "E006",
+      "nombre": "Plasma",
+      "origen": "D-006",
+      "tipo": "amorfo",
+      "esperanzaVida": 90,
+      "descripcion": "Seres de puro plasma energético"
+    },
+    {
+      "id": "E007",
+      "nombre": "Insectoide",
+      "origen": "D-010",
+      "tipo": "robotico",
+      "esperanzaVida": 40,
+      "descripcion": "Insectos gigantes inteligentes"
+    },
+    {
+      "id": "E008",
+      "nombre": "Paraíta",
+      "origen": "D-008",
+      "tipo": "parasito",
+      "esperanzaVida": 30,
+      "descripcion": "Parásitos de la dimensión Gotecha"
+    },
+    {
+      "id": "E009",
+      "nombre": "Fantasma",
+      "origen": "D-012",
+      "tipo": "amorfo",
+      "esperanzaVida": 100,
+      "descripcion": "Entidades espectrales inmortales"
+    },
+    {
+      "id": "E010",
+      "nombre": "Ciborgiano",
+      "origen": "D-009",
+      "tipo": "robotico",
+      "esperanzaVida": 120,
+      "descripcion": "Raza cyborg superinteligente"
+    }
+  ],
+  "eventos": [
+    {
+      "id": "VIAJE-1774218130490",
+      "tipoEvento": "viaje",
+      "fecha": "2026-03-22T22:22:10.490Z",
+      "motivo": "Vacaciones",
+      "personajeId": "P004",
+      "dimensionOrigenId": "D-001",
+      "dimensionDestinoId": "D-002"
+    },
+    {
+      "id": "CREACION-1774218221251",
+      "tipoEvento": "dimension",
+      "fecha": "2026-03-22T22:23:41.251Z",
+      "motivo": "experimento",
+      "dimensionId": "D-100",
+      "accion": "creacion"
+    }
+  ]
+}
