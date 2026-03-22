@@ -29,7 +29,7 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
     async remove(id: string): Promise<void> {
       await this._db.read();
       if (typeof await this.findById(id) === "undefined") throw new Error("El elemento no existe");
-      this._db.data.dimension = this._db.data.dimension.filter(i => i.id !== id);
+      this._db.data.personaje = this._db.data.personaje.filter(p => p.id !== id);
       await this._db.write();
     }
   
