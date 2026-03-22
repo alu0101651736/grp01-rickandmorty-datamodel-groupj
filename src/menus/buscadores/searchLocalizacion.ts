@@ -3,8 +3,8 @@ import { GestorMultiversal } from "../../gestor.js";
 import { Localizacion } from "../../localizaciones.js";
 
 /**
- * Funcion que busca las localizaciones de un nombre
- * @param gestor gestor del multiverso
+ * Funcion que busca localizaciones por nombre.
+ * @param gestor - gestor del multiverso.
  */
 export async function searchNombreLocalizacion(
   gestor: GestorMultiversal,
@@ -16,13 +16,13 @@ export async function searchNombreLocalizacion(
     validate: (nombre) =>
       nombre.length > 0 ? true : "Debe de tener un nombre",
   });
-  let busqueda = await gestor.filterLocalizacionesByNombre(input.nombre);
+  const busqueda = await gestor.filterLocalizacionesByNombre(input.nombre);
   return busqueda;
 }
 
 /**
- * Funcion que busca las localizaciones de un tipo
- * @param gestor gestor del multiverso
+ * Funcion que busca localizaciones por tipo.
+ * @param gestor - gestor del multiverso.
  */
 export async function searchTipoLocalizacion(
   gestor: GestorMultiversal,
@@ -38,13 +38,13 @@ export async function searchTipoLocalizacion(
       { title: "Simulacion virtual", value: "Simulacion virtual" },
     ],
   });
-  let busqueda = await gestor.filterLocalizacionesByTipo(input.tipo);
+  const busqueda = await gestor.filterLocalizacionesByTipo(input.tipo);
   return busqueda;
 }
 
 /**
- * Funcion que busca las localizaciones de una dimension
- * @param gestor gestor del multiverso
+ * Funcion que busca localizaciones por dimension de origen.
+ * @param gestor - gestor del multiverso.
  */
 export async function searchDimensionLocalizacion(
   gestor: GestorMultiversal,
@@ -56,6 +56,6 @@ export async function searchDimensionLocalizacion(
     validate: (nombre) =>
       nombre.length > 0 ? true : "Debe de tener una dimension",
   });
-  let busqueda = await gestor.filterLocalizacionesByDimension(input.nombre);
+  const busqueda = await gestor.filterLocalizacionesByDimension(input.nombre);
   return busqueda;
 }

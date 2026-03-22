@@ -1,10 +1,15 @@
 import prompts from "prompts";
 import { GestorMultiversal } from "../gestor.js";
 import { Invento } from "../inventos.js";
+import { tiposInvento } from "../types.js";
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
 
 /**
- * Funcion que implementa los metodos de registro de Inventos
- * @param manager gestor del multiverso
+ * Funcion que implementa los metodos de registro de inventos.
+ * @param manager - gestor del multiverso.
  */
 export async function mostrarMenuInvento(
   manager: GestorMultiversal,
@@ -14,7 +19,7 @@ export async function mostrarMenuInvento(
     const respuesta = await prompts({
       type: "select",
       name: "accion",
-      message: `Menu de Inventoes`,
+      message: "Menu de Inventos",
       choices: [
         { title: "Anadir", value: "anadir" },
         { title: "Modificar", value: "modificar" },
@@ -33,10 +38,11 @@ export async function mostrarMenuInvento(
       case "modificar":
         await modificarInventoMenu(manager);
         break;
-      case "mostrar":
-        const Invento = await manager.inventosRepo.getAll();
-        console.log(Invento);
+      case "mostrar": {
+        const inventos = await manager.inventosRepo.getAll();
+        console.log(inventos);
         break;
+      }
       case "volver":
         volver = true;
         break;
@@ -45,17 +51,16 @@ export async function mostrarMenuInvento(
 }
 
 /**
- * Funcion que permite añadir Inventoes mediante prompts
- * @param manager el gestor del multiverso
- * @returns true si se ha creado la Invento de manera correcta
+ * Funcion que permite anadir inventos mediante prompts.
+ * @param manager - el gestor del multiverso.
+ * @returns true si se ha creado el invento de manera correcta.
  */
 async function addInventoMenu(manager: GestorMultiversal): Promise<boolean> {
-  // Prompts para recopilar los datos del objeto
   const data = await prompts([
     {
       type: "text",
       name: "id",
-      message: "Introduce el ID de la dimensión a añadir:",
+      message: "Introduce el ID del invento a anadir:",
       validate: (id) => (id.length > 0 ? true : "Debe de tener un ID"),
     },
     {
@@ -79,21 +84,24 @@ async function addInventoMenu(manager: GestorMultiversal): Promise<boolean> {
       type: "text",
       name: "inventor",
       message: "Inventor:",
-      validate: (inventor) => (inventor.length > 0 ? true : "Debe de tener un nombre"),
+      validate: (inventor) =>
+        inventor.length > 0 ? true : "Debe de tener un nombre",
     },
     {
       type: "text",
       name: "nivelPeligro",
-      message: "Nivel Peligro:",
+      message: "Nivel de peligro:",
       validate: (nivelPeligro) =>
-        nivelPeligro >= 1 && nivelPeligro <= 10 ? true : "Debe ser entre 1-10",
+        Number(nivelPeligro) >= 1 && Number(nivelPeligro) <= 10
+          ? true
+          : "Debe ser entre 1-10",
     },
     {
       type: "text",
       name: "descripcion",
-      message: "Descripción:",
+      message: "Descripcion:",
       validate: (descripcion) =>
-        descripcion.length > 0 ? true : "Debe de tener descripción",
+        descripcion.length > 0 ? true : "Debe de tener descripcion",
     },
   ]);
 
@@ -108,24 +116,22 @@ async function addInventoMenu(manager: GestorMultiversal): Promise<boolean> {
     );
 
     await manager.addInvento(newInvento);
-    console.log(`La dimensión ${data.id} ha sido añadida correctamente`);
+    console.log(`El invento ${data.id} ha sido anadido correctamente`);
     return true;
-  } catch (error: any) {
-    console.log("Error", error.message);
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
     return false;
   }
 }
 
 /**
- * Funcion que permite eliminar una Invento del multiverso
- * @param manager el gestor del multiverso
- * @returns true si se ha eliminado la Invento de manera correcta
- * @throws Error si no existe el ID que se quiere eliminar
+ * Funcion que permite eliminar un invento del multiverso.
+ * @param manager - el gestor del multiverso.
+ * @returns true si se ha eliminado el invento de manera correcta.
  */
 async function removeInventoMenu(
   manager: GestorMultiversal,
 ): Promise<boolean> {
-  // Prompt conseguir el id a eliminar
   const { id } = await prompts({
     type: "text",
     name: "id",
@@ -135,26 +141,27 @@ async function removeInventoMenu(
 
   try {
     await manager.removeInvento(id);
-    console.log(`La Invento ${id} ha sido eliminada correctamente.`);
+    console.log(`El invento ${id} ha sido eliminado correctamente.`);
     return true;
-  } catch (error: any) {
-    console.log("Error", error.message);
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
     return false;
   }
 }
 
 /**
- * Funcion que permite modificar los elementos de una Invento en la base de datos
- * @param manager 
- * @throws Error si no se ha podido modificar la Invento o si no existe
+ * Funcion que permite modificar los elementos de un invento.
+ * @param manager - gestor del multiverso.
+ * @returns true si se ha modificado correctamente.
  */
-async function modificarInventoMenu(manager: GestorMultiversal) {
-  // Prompts para recopilar los datos para modificar
+async function modificarInventoMenu(
+  manager: GestorMultiversal,
+): Promise<boolean> {
   const data = await prompts([
     {
       type: "text",
       name: "id",
-      message: "Introduce el ID de la dimensión a añadir:",
+      message: "Introduce el ID del invento a modificar:",
       validate: (id) => (id.length > 0 ? true : "Debe de tener un ID"),
     },
     {
@@ -177,7 +184,7 @@ async function modificarInventoMenu(manager: GestorMultiversal) {
     {
       type: "text",
       name: "inventor",
-      message: "Inventor:",
+      message: "Inventor: (vacio para no modificar)",
     },
     {
       type: "text",
@@ -191,20 +198,30 @@ async function modificarInventoMenu(manager: GestorMultiversal) {
     {
       type: "text",
       name: "descripcion",
-      message: "Descripción: (vacio para no modificar)",
+      message: "Descripcion: (vacio para no modificar)",
     },
   ]);
+
   try {
-    const mod: any = {};
+    const mod: {
+      nombre?: string;
+      inventor?: string | null;
+      tipo?: tiposInvento;
+      nivelPeligro?: number;
+      descripcion?: string;
+    } = {};
+
     if (data.nombre) mod.nombre = data.nombre;
-    if (data.tipo !== null) mod.tipo = data.tipo;
-    if (!isNaN(data.nivelPeligro)) mod.nivelPeligro = Number(data.nivelPeligro);
+    if (data.tipo !== null) mod.tipo = data.tipo as tiposInvento;
+    if (data.nivelPeligro !== "") mod.nivelPeligro = Number(data.nivelPeligro);
     if (data.inventor) mod.inventor = data.inventor;
     if (data.descripcion) mod.descripcion = data.descripcion;
 
-    const result = await manager.updateInvento(data.id, mod);
-    console.log(`La Invento ${data.id} ha sido modificada correctamente.`);
-  } catch (error: any) {
-    console.log("error", error.message);
+    await manager.updateInvento(data.id, mod);
+    console.log(`El invento ${data.id} ha sido modificado correctamente.`);
+    return true;
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
+    return false;
   }
 }

@@ -1,10 +1,15 @@
 import prompts from "prompts";
 import { GestorMultiversal } from "../gestor.js";
 import { Personaje } from "../personajes.js";
+import { estadosPersonaje, tipoAfiliacion } from "../types.js";
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
 
 /**
- * Funcion que implementa los metodos de registro dePersonajees
- * @param manager gestor del multiverso
+ * Funcion que implementa los metodos de registro de personajes.
+ * @param manager - gestor del multiverso.
  */
 export async function mostrarMenuPersonaje(
   manager: GestorMultiversal,
@@ -14,7 +19,7 @@ export async function mostrarMenuPersonaje(
     const respuesta = await prompts({
       type: "select",
       name: "accion",
-      message: `Menu de Personajes`,
+      message: "Menu de Personajes",
       choices: [
         { title: "Anadir", value: "anadir" },
         { title: "Modificar", value: "modificar" },
@@ -23,6 +28,7 @@ export async function mostrarMenuPersonaje(
         { title: "Volver", value: "volver" },
       ],
     });
+
     switch (respuesta.accion) {
       case "anadir":
         await addPersonajeMenu(manager);
@@ -33,10 +39,11 @@ export async function mostrarMenuPersonaje(
       case "modificar":
         await modificarPersonajeMenu(manager);
         break;
-      case "mostrar":
+      case "mostrar": {
         const personaje = await manager.personajesRepo.getAll();
         console.log(personaje);
         break;
+      }
       case "volver":
         volver = true;
         break;
@@ -45,16 +52,16 @@ export async function mostrarMenuPersonaje(
 }
 
 /**
- * Funcion que permite añadir personajes mediante prompts
- * @param manager el gestor del multiverso
- * @returns true si se ha creado el personaje de manera correcta
+ * Funcion que permite anadir personajes mediante prompts.
+ * @param manager - el gestor del multiverso.
+ * @returns true si se ha creado el personaje de manera correcta.
  */
 async function addPersonajeMenu(manager: GestorMultiversal): Promise<boolean> {
   const data = await prompts([
     {
       type: "text",
       name: "id",
-      message: "Introduce el ID de la dimensión a añadir:",
+      message: "Introduce el ID del personaje a anadir:",
       validate: (id) => (id.length > 0 ? true : "Debe de tener un ID"),
     },
     {
@@ -73,9 +80,9 @@ async function addPersonajeMenu(manager: GestorMultiversal): Promise<boolean> {
     {
       type: "text",
       name: "dimension",
-      message: "Dimension dimension:",
+      message: "Dimension:",
       validate: (dimension) =>
-        dimension.length > 0 ? true : "Debe de tener una dimension dimension",
+        dimension.length > 0 ? true : "Debe de tener una dimension",
     },
     {
       type: "select",
@@ -83,8 +90,8 @@ async function addPersonajeMenu(manager: GestorMultiversal): Promise<boolean> {
       message: "Estado:",
       choices: [
         { title: "Vivo", value: "vivo" },
-        { title: "Muerto", value: "vivo" },
-        { title: "Desconocido", value: "vivo" },
+        { title: "Muerto", value: "muerto" },
+        { title: "Desconocido", value: "desconocido" },
         { title: "Robot sustituto", value: "robot sustituto" },
         { title: "Clon", value: "clon" },
       ],
@@ -105,45 +112,44 @@ async function addPersonajeMenu(manager: GestorMultiversal): Promise<boolean> {
       name: "nivelInteligencia",
       message: "Nivel intelectual:",
       validate: (nivelInteligencia) =>
-        nivelInteligencia >= 1 && nivelInteligencia <= 10
+        Number(nivelInteligencia) >= 1 && Number(nivelInteligencia) <= 10
           ? true
           : "Debe ser entre 1-10",
     },
     {
       type: "text",
       name: "descripcion",
-      message: "Descripción:",
+      message: "Descripcion:",
       validate: (descripcion) =>
-        descripcion.length > 0 ? true : "Debe de tener descripción",
+        descripcion.length > 0 ? true : "Debe de tener descripcion",
     },
   ]);
 
   try {
-    const newPersoPersonaje = new Personaje(
+    const newPersonaje = new Personaje(
       data.id,
       data.nombre,
       data.especie,
       data.dimension,
       data.estado,
       data.afiliacion,
-      data.nivelInteligencia,
+      Number(data.nivelInteligencia),
       data.descripcion,
     );
 
-    await manager.addPersonaje(newPersoPersonaje);
-    console.log(`La dimensión ${data.id} ha sido añadida correctamente`);
+    await manager.addPersonaje(newPersonaje);
+    console.log(`El personaje ${data.id} ha sido anadido correctamente`);
     return true;
-  } catch (error: any) {
-    console.log("Error", error.message);
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
     return false;
   }
 }
 
 /**
- * Funcion que permite eliminar un personaje del multiverso
- * @param manager el gestor del multiverso
- * @returns true si se ha eliminado el personaje de manera correcta
- * @throws Error si no existe el ID que se quiere eliminar
+ * Funcion que permite eliminar un personaje del multiverso.
+ * @param manager - el gestor del multiverso.
+ * @returns true si se ha eliminado el personaje de manera correcta.
  */
 async function removePersonajeMenu(
   manager: GestorMultiversal,
@@ -157,18 +163,18 @@ async function removePersonajeMenu(
 
   try {
     await manager.removePersonaje(id);
-    console.log(`El personaje ${id} ha sido eliminada correctamente.`);
+    console.log(`El personaje ${id} ha sido eliminado correctamente.`);
     return true;
-  } catch (error: any) {
-    console.log("Error", error.message);
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
     return false;
   }
 }
 
 /**
- * Funcion que permite modificar los elementos de un personaje en la base de datos
- * @param manager
- * @throws Error si no se ha podido modificar el personaje o si no existe
+ * Funcion que permite modificar los elementos de un personaje en la base de datos.
+ * @param manager - gestor del multiverso.
+ * @returns true si se ha modificado correctamente.
  */
 async function modificarPersonajeMenu(
   manager: GestorMultiversal,
@@ -177,7 +183,7 @@ async function modificarPersonajeMenu(
     {
       type: "text",
       name: "id",
-      message: "Introduce el ID de la dimensión a añadir:",
+      message: "Introduce el ID del personaje a modificar:",
       validate: (id) => (id.length > 0 ? true : "Debe de tener un ID"),
     },
     {
@@ -193,7 +199,7 @@ async function modificarPersonajeMenu(
     {
       type: "text",
       name: "dimension",
-      message: "Dimension dimension: (vacio para no modificar)",
+      message: "Dimension: (vacio para no modificar)",
     },
     {
       type: "select",
@@ -202,8 +208,8 @@ async function modificarPersonajeMenu(
       choices: [
         { title: "Sin modificar", value: null },
         { title: "Vivo", value: "vivo" },
-        { title: "Muerto", value: "vivo" },
-        { title: "Desconocido", value: "vivo" },
+        { title: "Muerto", value: "muerto" },
+        { title: "Desconocido", value: "desconocido" },
         { title: "Robot sustituto", value: "robot sustituto" },
         { title: "Clon", value: "clon" },
       ],
@@ -225,36 +231,44 @@ async function modificarPersonajeMenu(
       name: "nivelInteligencia",
       message: "Nivel intelectual:",
       validate: (nivelInteligencia) =>
-        (nivelInteligencia >= 1 && nivelInteligencia <= 10) ||
-        nivelInteligencia.length === 0
+        nivelInteligencia === "" ||
+        (Number(nivelInteligencia) >= 1 && Number(nivelInteligencia) <= 10)
           ? true
           : "Debe ser entre 1-10 o vacio",
     },
     {
       type: "text",
       name: "descripcion",
-      message: "Descripción: (vacio para no modificar)",
-      validate: (descripcion) =>
-        descripcion.length > 0 ? true : "Debe de tener descripción",
+      message: "Descripcion: (vacio para no modificar)",
     },
   ]);
 
   try {
-    const mod: any = {};
+    const mod: {
+      nombre?: string;
+      especie?: string | null;
+      dimension?: string | null;
+      estado?: estadosPersonaje;
+      afiliacion?: tipoAfiliacion;
+      nivelInteligencia?: number;
+      descripcion?: string;
+    } = {};
+
     if (data.nombre) mod.nombre = data.nombre;
-    if (data.estado !== null) mod.estado = data.estado;
+    if (data.estado !== null) mod.estado = data.estado as estadosPersonaje;
     if (data.especie) mod.especie = data.especie;
     if (data.dimension) mod.dimension = data.dimension;
-    if (!isNaN(data.nivelInteligencia))
-      mod.nivelInteligencia = data.nivelInteligencia;
-    if (data.afiliacion !== null) mod.afiliacion = data.afiliacion;
+    if (data.nivelInteligencia !== "") {
+      mod.nivelInteligencia = Number(data.nivelInteligencia);
+    }
+    if (data.afiliacion !== null) mod.afiliacion = data.afiliacion as tipoAfiliacion;
     if (data.descripcion) mod.descripcion = data.descripcion;
 
-    const result = await manager.updatePersonaje(data.id, mod);
-    console.log(`El personaje ${data.id} ha sido modificada correctamente.`);
+    await manager.updatePersonaje(data.id, mod);
+    console.log(`El personaje ${data.id} ha sido modificado correctamente.`);
     return true;
-  } catch (error: any) {
-    console.log("error", error.message);
+  } catch (error: unknown) {
+    console.log("Error", getErrorMessage(error));
     return false;
   }
 }

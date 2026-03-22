@@ -3,13 +3,13 @@ import { GestorMultiversal } from "../../gestor.js";
 import { Personaje } from "../../personajes.js";
 
 /**
- * Funcion que busca los personajes de un nombre
- * @param gestor gestor del multiverso
+ * Funcion que busca personajes por nombre.
+ * @param gestor - gestor del multiverso.
  */
 export async function searchNombrePersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
-  let input = await prompts([
+  const input = await prompts([
     {
       type: "text",
       name: "nombre",
@@ -54,13 +54,13 @@ export async function searchNombrePersonaje(
 }
 
 /**
- * Funcion que busca los personajes de una especie
- * @param gestor gestor del multiverso
+ * Funcion que busca personajes por especie.
+ * @param gestor - gestor del multiverso.
  */
 export async function searchEspeciePersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
-  let input = await prompts([
+  const input = await prompts([
     {
       type: "text",
       name: "nombre",
@@ -105,13 +105,13 @@ export async function searchEspeciePersonaje(
 }
 
 /**
- * Funcion que busca los personajes de una afiliacion
- * @param gestor gestor del multiverso
+ * Funcion que busca personajes por afiliacion.
+ * @param gestor - gestor del multiverso.
  */
 export async function searchAfiliacionPersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
-  let input = await prompts([
+  const input = await prompts([
     {
       type: "select",
       name: "afiliacion",
@@ -160,13 +160,13 @@ export async function searchAfiliacionPersonaje(
 }
 
 /**
- * Funcion que busca los personajes que estan en un estado
- * @param gestor gestor del multiverso
+ * Funcion que busca personajes por estado.
+ * @param gestor - gestor del multiverso.
  */
 export async function searchEstadoPersonaje(
   gestor: GestorMultiversal,
 ): Promise<Personaje[]> {
-  let input = await prompts([
+  const input = await prompts([
     {
       type: "select",
       name: "estado",
@@ -220,11 +220,13 @@ export async function searchEstadoPersonaje(
 }
 
 /**
- * Funcion que busca los personajes de una dimension
- * @param gestor gestor del multiverso
+ * Funcion que busca personajes por dimension de origen.
+ * @param gestor - gestor del multiverso.
  */
-export async function searchOrigenPersonaje(gestor: GestorMultiversal) {
-  let input = await prompts([
+export async function searchOrigenPersonaje(
+  gestor: GestorMultiversal,
+): Promise<Personaje[]> {
+  const input = await prompts([
     {
       type: "text",
       name: "nombre",
