@@ -95,12 +95,12 @@ export class RepositorioPersonajes implements IDuplicable<Personaje> {
 
   async filterByNombre(nombre: string): Promise<Personaje[]> {
     this._db.read();
-    return this._db.data.personaje.filter(p => p.nombre === nombre);
+    return this._db.data.personaje.filter(p => normalize(p.nombre) === normalize(nombre));
   }
 
   async filterByEspecie(especie: string): Promise<Personaje[]> {
     this._db.read();
-    return this._db.data.personaje.filter(p => p.especie === especie);
+    return this._db.data.personaje.filter(p => normalize(p.especie) === normalize(especie));
   }
 
   async filterByAfiliacion(afiliacion: tipoAfiliacion): Promise<Personaje[]> {

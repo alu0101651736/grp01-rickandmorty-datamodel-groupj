@@ -2,6 +2,7 @@ import { Low } from "lowdb";
 import { EventoMultiversal } from "./interfaces.js";
 import { Data } from "./Database/db.js";
 import { tipoEventoMultiversal } from "./types.js";
+import { normalize } from "./auxFunc.js";
 
 /**
  * Repositorio para registrar y consultar eventos del multiverso.
@@ -67,7 +68,7 @@ export class RepositorioEventos {
     }
 
     return this._db.data.eventos.filter((e) =>
-      e.tipoEvento === "invento" && e.inventoId === inventoId,
+      e.tipoEvento === "invento" && normalize(e.inventoId) === normalize(inventoId),
     );
   }
 }
