@@ -8,6 +8,7 @@ import { mostrarMenuLocalizacion } from "./menuLocalizacion.js";
 import { mostrarMenuInvento } from "./menuInventos.js";
 import { mostrarMenuEstadoGlobal } from "./menuEstadoGlobal.js";
 import { mostrarMenuInformes } from "./menuInformes.js";
+import { mostrarMenuEventos } from "./menuEventos.js";
 
 type OpcionMenuPrincipal =
   | "dimensiones"
@@ -16,6 +17,7 @@ type OpcionMenuPrincipal =
   | "localizaciones"
   | "inventos"
   | "estadoGlobal"
+  | "eventos"
   | "informes"
   | "salir";
 
@@ -30,8 +32,9 @@ export async function mostrarMenuPrincipal(): Promise<OpcionMenuPrincipal> {
       { title: "Especies", value: "especies" },
       { title: "Localizaciones", value: "localizaciones" },
       { title: "Inventos", value: "inventos" },
-      { title: "Estado Global del Multiverso", value: "estadoGlobal" },
+      { title: "Eventos", value: "eventos" },
       { title: "Informes", value: "informes" },
+      { title: "Estado global del multiverso", value: "estadoGlobal" },
       { title: "Salir", value: "salir" },
     ],
   });
@@ -65,6 +68,9 @@ export async function main(): Promise<void> {
         break;
       case "estadoGlobal":
         await mostrarMenuEstadoGlobal(gestor);
+        break;
+      case "eventos":
+        await mostrarMenuEventos(gestor);
         break;
       case "informes":
         await mostrarMenuInformes(gestor);
