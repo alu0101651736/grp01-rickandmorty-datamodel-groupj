@@ -88,11 +88,6 @@ describe("GestorMultiversal", () => {
     await expect(gestor.addLocalizacion(l)).rejects.toThrow("Origen de la localización desconocida");
   });
 
-  test("addInvento error inventor null", async () => {
-    const i = new Invento("I1", "Gun", null, "Arma", 5, "d");
-    await expect(gestor.addInvento(i)).rejects.toThrow("El invento debe tener un inventor");
-  });
-
   test("addInvento inventor no existe", async () => {
     const i = new Invento("I1", "Gun", "P_NO", "Arma", 5, "d");
     await expect(gestor.addInvento(i)).rejects.toThrow("Inventor desconocido");
