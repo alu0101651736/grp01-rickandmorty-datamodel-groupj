@@ -119,7 +119,7 @@ describe("RepositorioDimensiones", () => {
 
   test("isDuplicate true", async () => {
     const d1 = new Dimension("D-15", "D-", "activa", 5, "desc");
-    const d2 = new Dimension("D-16", "a", "activa", 5, "desc");
+    const d2 = new Dimension("D-16", "d-", "activa", 5, "desc");
 
     await repo.add(d1);
 

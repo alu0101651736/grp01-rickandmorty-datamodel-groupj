@@ -129,13 +129,13 @@ describe("RepositorioPersonajes", () => {
     await repo.add(p1);
     await repo.add(p2);
 
-    await expect(repo.update("2", {
+    await expect(repo.update("P002", {
       nombre: "Rick",
       especie: "E1",
       dimension: "D-001"
     })).rejects.toThrow("Personaje duplicado");
     await repo.remove("P001");
-    await repo.remove("2");
+    await repo.remove("P002");
   });
 
   test("update sin cambios", async () => {
@@ -158,7 +158,7 @@ describe("RepositorioPersonajes", () => {
     const result = await repo.filterByNombre("Rick");
     expect(result.length).toBe(1);
     await repo.remove("P001");
-    await repo.remove("2");
+    await repo.remove("P002");
   });
 
   test("filterByEspecie", async () => {
@@ -170,7 +170,7 @@ describe("RepositorioPersonajes", () => {
     const result = await repo.filterByEspecie("E1");
     expect(result.length).toBe(1);
     await repo.remove("P001");
-    await repo.remove("2");
+    await repo.remove("P002");
   });
 
   test("filterByAfiliacion", async () => {
@@ -182,7 +182,7 @@ describe("RepositorioPersonajes", () => {
     const result = await repo.filterByAfiliacion("Familia Smith");
     expect(result.length).toBe(1);
     await repo.remove("P001");
-    await repo.remove("2");
+    await repo.remove("P002");
   });
 
   test("filterByEstado", async () => {
@@ -194,7 +194,7 @@ describe("RepositorioPersonajes", () => {
     const result = await repo.filterByEstado("muerto");
     expect(result.length).toBe(1);
     await repo.remove("P001");
-    await repo.remove("2");
+    await repo.remove("P002");
   });
 
   test("filterByDimension", async () => {
@@ -206,7 +206,7 @@ describe("RepositorioPersonajes", () => {
     const result = await repo.filterByDimension("D-001");
     expect(result.length).toBe(1);
     await repo.remove("P001");
-    await repo.remove("2");
+    await repo.remove("P002");
   });
 
   test("setNullDimension", async () => {

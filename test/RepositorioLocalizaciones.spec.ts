@@ -108,12 +108,12 @@ describe("RepositorioLocalizaciones", () => {
     await repo.add(l1);
     await repo.add(l2);
 
-    await expect(repo.update("2", {
+    await expect(repo.update("L002", {
       nombre: "Tierra",
       dimension: "D-001"
     })).rejects.toThrow("Localización duplicada");
     await repo.remove("L001");
-    await repo.remove("2");
+    await repo.remove("L002");
   });
 
   test("update sin cambios", async () => {
@@ -137,7 +137,7 @@ describe("RepositorioLocalizaciones", () => {
 
     expect(result.length).toBe(1);
     await repo.remove("L001");
-    await repo.remove("2");
+    await repo.remove("L002");
   });
 
   test("filterByTipo", async () => {
@@ -150,7 +150,7 @@ describe("RepositorioLocalizaciones", () => {
 
     expect(result.length).toBe(1);
     await repo.remove("L001");
-    await repo.remove("2");
+    await repo.remove("L002");
   });
 
   test("filterByDimension", async () => {
@@ -163,7 +163,7 @@ describe("RepositorioLocalizaciones", () => {
 
     expect(result.length).toBe(1);
     await repo.remove("L001");
-    await repo.remove("2");
+    await repo.remove("L002");
   });
 
   test("isDuplicate true", async () => {

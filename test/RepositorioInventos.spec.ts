@@ -117,12 +117,12 @@ describe("RepositorioInventos", () => {
     await repo.add(i1);
     await repo.add(i2);
 
-    await expect(repo.update("2", {
+    await expect(repo.update("I002", {
       nombre: "Pistola",
       inventor: "P001"
     })).rejects.toThrow("Invento duplicado");
     await repo.remove("I001");
-    await repo.remove("2");
+    await repo.remove("I002");
   });
 
   test("update sin cambios", async () => {
@@ -146,7 +146,7 @@ describe("RepositorioInventos", () => {
 
     expect(result.length).toBe(1);
     await repo.remove("I001");
-    await repo.remove("2");
+    await repo.remove("I002");
   });
 
   test("filterByTipo", async () => {
@@ -159,7 +159,7 @@ describe("RepositorioInventos", () => {
 
     expect(result.length).toBe(1);
     await repo.remove("I001");
-    await repo.remove("2");
+    await repo.remove("I002");
   });
 
   test("filterByInventor", async () => {
@@ -172,7 +172,7 @@ describe("RepositorioInventos", () => {
 
     expect(result.length).toBe(1);
     await repo.remove("I001");
-    await repo.remove("2");
+    await repo.remove("I002");
   });
 
   test("filterByPeligrosidad", async () => {
@@ -185,7 +185,7 @@ describe("RepositorioInventos", () => {
 
     expect(result.length).toBe(1);
     await repo.remove("I001");
-    await repo.remove("2");
+    await repo.remove("I002");
   });
 
   test("setNullInventor", async () => {
@@ -197,11 +197,11 @@ describe("RepositorioInventos", () => {
     await repo.setNullInventor("P001");
 
     const updated1 = await repo.findById("I001");
-    const updated2 = await repo.findById("2");
+    const updated2 = await repo.findById("I002");
     expect(updated1?.inventor).toBe(null);
     expect(updated2?.inventor).toBe("P002");
     await repo.remove("I001");
-    await repo.remove("2");
+    await repo.remove("I002");
   });
 
   test("isDuplicate true", async () => {
