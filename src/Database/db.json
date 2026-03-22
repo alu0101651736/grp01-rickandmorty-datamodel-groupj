@@ -27,7 +27,24 @@
       "descripcion": "Q"
     }
   ],
-  "invento": [],
+  "invento": [
+    {
+      "id": "A3",
+      "nombre": "S",
+      "inventor": "A1",
+      "tipo": "Dispositivo de viaje",
+      "nivelPeligro": 2,
+      "descripcion": "S"
+    },
+    {
+      "id": "B2",
+      "nombre": "S",
+      "inventor": "A1",
+      "tipo": "Objeto cotidiano absurdo",
+      "nivelPeligro": 3,
+      "descripcion": "D"
+    }
+  ],
   "localizacion": [],
   "especie": []
 }

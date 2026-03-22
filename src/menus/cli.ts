@@ -5,6 +5,7 @@ import { mostrarMenuDimension } from "./menuDimension.js";
 import { mostrarMenuPersonaje } from "./menuPersonaje.js";
 import { mostrarMenuEspecie } from "./menuEspecie.js";
 import { mostrarMenuLocalizacion } from "./menuLocalizacion.js";
+import { mostrarMenuInvento } from "./menuInventos.js"
 
 type OpcionMenuPrincipal =
   | "dimensiones"
@@ -74,7 +75,7 @@ export async function main(): Promise<void> {
         await mostrarMenuLocalizacion(gestor);
         break;
       case "inventos":
-        console.log("funcion no implementada");
+        await mostrarMenuInvento(gestor);
         break;
       case "consultas":
         await mostrarMenuConsultas();
